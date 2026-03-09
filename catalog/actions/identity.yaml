@@ -1,0 +1,142 @@
+actions:
+
+  - id: disable_user
+    name: Disable User Account
+    domain: identity
+    description: >
+      Disable a user account in the directory service, preventing further
+      authentication. The account is not deleted; its history and group
+      memberships are preserved for forensic analysis.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+      - splunk_soar
+    inputs:
+      - name: user_upn
+        type: string
+        required: true
+        description: User Principal Name (UPN) of the account to disable.
+        example: "jdoe@corp.com"
+      - name: reason
+        type: string
+        required: false
+        description: Reason for disabling the account (audit log).
+        default: "Disabled due to suspicious activity"
+    outputs:
+      - name: user_upn
+        type: string
+        description: UPN of the disabled account.
+      - name: account_enabled
+        type: boolean
+        description: Always False after successful execution.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-UAP
+        technique_name: User Account Permissions
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1078
+        technique_name: Valid Accounts
+        tactic: Defense Evasion
+      - technique_id: T1110
+        technique_name: Brute Force
+        tactic: Credential Access
+    tags:
+      - identity
+      - account
+      - access-control
+
+  - id: revoke_session
+    name: Revoke User Sessions
+    domain: identity
+    description: >
+      Revoke all active sign-in sessions and refresh tokens for a user account.
+      Forces re-authentication on all devices and applications. Should be combined
+      with disable_user or reset_password for a complete response.
+    risk_level: medium
+    approval_mode: none
+    supported_providers:
+      - defender
+      - splunk_soar
+    inputs:
+      - name: user_upn
+        type: string
+        required: true
+        description: User Principal Name of the target account.
+        example: "jdoe@corp.com"
+    outputs:
+      - name: user_upn
+        type: string
+        description: UPN of the affected user.
+      - name: sessions_revoked
+        type: boolean
+        description: Whether revocation was confirmed.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-UAP
+        technique_name: User Account Permissions
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1550
+        technique_name: Use Alternate Authentication Material
+        tactic: Lateral Movement
+      - technique_id: T1078
+        technique_name: Valid Accounts
+        tactic: Persistence
+    tags:
+      - identity
+      - session
+      - token
+
+  - id: reset_password
+    name: Reset User Password
+    domain: identity
+    description: >
+      Force a password reset for a user account, expiring current credentials
+      and requiring the user to set a new password at next login. Use in conjunction
+      with revoke_session to fully evict an attacker.
+    risk_level: medium
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: user_upn
+        type: string
+        required: true
+        description: User Principal Name of the target account.
+        example: "jdoe@corp.com"
+      - name: notify_user
+        type: boolean
+        required: false
+        default: true
+        description: Whether to notify the user of the password reset.
+    outputs:
+      - name: user_upn
+        type: string
+        description: UPN of the affected user.
+      - name: force_change_on_next_login
+        type: boolean
+        description: Whether the flag was set.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-CR
+        technique_name: Credential Reset
+        tactic: Restore
+    attack_mappings:
+      - technique_id: T1110
+        technique_name: Brute Force
+        tactic: Credential Access
+      - technique_id: T1556
+        technique_name: Modify Authentication Process
+        tactic: Credential Access
+    tags:
+      - identity
+      - credential
+      - account

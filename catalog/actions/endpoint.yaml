@@ -1,0 +1,208 @@
+actions:
+
+  - id: isolate_host
+    name: Isolate Host
+    domain: endpoint
+    description: >
+      Isolate (contain/quarantine) a host from the network while preserving
+      communication to the security management plane. Prevents lateral movement
+      and C2 communication without losing EDR telemetry.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: host_id
+        type: string
+        required: true
+        description: Platform-specific host or device identifier.
+        example: "abc1234567890abcdef1234567890ab"
+      - name: comment
+        type: string
+        required: false
+        description: Reason for isolation (for audit log).
+        default: "Isolated via OpenSecOps"
+        example: "Suspected ransomware activity — T1486"
+    outputs:
+      - name: host_id
+        type: string
+        description: Host that was isolated.
+      - name: status
+        type: string
+        description: Isolation status (e.g. contained, Pending).
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp of the action.
+    d3fend_mappings:
+      - technique_id: D3-NI
+        technique_name: Network Isolation
+        tactic: Isolate
+    attack_mappings:
+      - technique_id: T1021
+        technique_name: Remote Services
+        tactic: Lateral Movement
+      - technique_id: T1071
+        technique_name: Application Layer Protocol
+        tactic: Command and Control
+      - technique_id: T1486
+        technique_name: Data Encrypted for Impact
+        tactic: Impact
+    tags:
+      - endpoint
+      - containment
+      - lateral-movement
+
+  - id: release_host
+    name: Release Host
+    domain: endpoint
+    description: >
+      Lift network isolation/containment from a host, restoring normal network
+      connectivity. Should only be performed after threat remediation is confirmed.
+    risk_level: medium
+    approval_mode: soft
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: host_id
+        type: string
+        required: true
+        description: Platform-specific host or device identifier.
+      - name: comment
+        type: string
+        required: false
+        description: Reason for releasing isolation.
+        default: "Released via OpenSecOps"
+    outputs:
+      - name: host_id
+        type: string
+        description: Host that was released.
+      - name: status
+        type: string
+        description: Post-release status.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-NI
+        technique_name: Network Isolation
+        tactic: Isolate
+    attack_mappings: []
+    tags:
+      - endpoint
+      - remediation
+
+  - id: kill_process
+    name: Kill Process
+    domain: endpoint
+    description: >
+      Terminate a running process on a host by PID or process name. Used to
+      stop active malware execution, C2 agents, or ransomware encryption threads.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: host_id
+        type: string
+        required: true
+        description: Platform-specific host identifier.
+      - name: pid
+        type: integer
+        required: true
+        description: Process ID to terminate.
+        example: 4321
+      - name: process_name
+        type: string
+        required: false
+        description: Process name (informational / fallback).
+        example: "malware.exe"
+    outputs:
+      - name: host_id
+        type: string
+        description: Host on which the process was killed.
+      - name: pid
+        type: integer
+        description: PID that was terminated.
+      - name: killed
+        type: boolean
+        description: Whether the kill was successful.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-PT
+        technique_name: Process Termination
+        tactic: Evict
+    attack_mappings:
+      - technique_id: T1059
+        technique_name: Command and Scripting Interpreter
+        tactic: Execution
+      - technique_id: T1055
+        technique_name: Process Injection
+        tactic: Defense Evasion
+    tags:
+      - endpoint
+      - execution
+      - malware
+
+  - id: quarantine_file
+    name: Quarantine File
+    domain: endpoint
+    description: >
+      Move or prevent execution of a malicious file by placing it in quarantine.
+      The file remains available for forensic analysis but cannot execute.
+    risk_level: medium
+    approval_mode: none
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: file_path
+        type: string
+        required: true
+        description: Full path to the file on the host.
+        example: "C:\\Users\\victim\\Downloads\\evil.exe"
+      - name: host_id
+        type: string
+        required: false
+        description: Host identifier (required by some providers).
+      - name: sha1
+        type: string
+        required: false
+        description: SHA-1 hash of the file (used by Defender).
+        example: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    outputs:
+      - name: file_path
+        type: string
+        description: Path that was quarantined.
+      - name: quarantined
+        type: boolean
+        description: Whether quarantine succeeded.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-EFI
+        technique_name: Executable File Investigation
+        tactic: Detect
+      - technique_id: D3-IDA
+        technique_name: Identifier Activity Analysis
+        tactic: Detect
+    attack_mappings:
+      - technique_id: T1204
+        technique_name: User Execution
+        tactic: Execution
+      - technique_id: T1566
+        technique_name: Phishing
+        tactic: Initial Access
+    tags:
+      - endpoint
+      - file
+      - malware

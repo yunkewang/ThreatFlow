@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensecops.dev/schemas/provider_config.schema.json",
+  "title": "OpenSecOps Provider Configuration",
+  "description": "Schema for a provider adapter configuration file (providers.yaml or providers.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "providers": {
+      "type": "object",
+      "description": "Map of provider_id to provider configuration.",
+      "additionalProperties": {
+        "$ref": "#/$defs/ProviderConfig"
+      }
+    }
+  },
+  "$defs": {
+    "ProviderConfig": {
+      "type": "object",
+      "description": "Configuration for a single provider adapter.",
+      "required": ["enabled"],
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this provider is active.",
+          "default": true
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of this config entry.",
+          "default": ""
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "providers": {
+        "crowdstrike": {
+          "enabled": true,
+          "client_id": "${CS_CLIENT_ID}",
+          "client_secret": "${CS_CLIENT_SECRET}",
+          "base_url": "https://api.crowdstrike.com"
+        },
+        "defender": {
+          "enabled": true,
+          "tenant_id": "${AZURE_TENANT_ID}",
+          "client_id": "${AZURE_CLIENT_ID}",
+          "client_secret": "${AZURE_CLIENT_SECRET}"
+        },
+        "splunk_soar": {
+          "enabled": false,
+          "base_url": "https://soar.corp.com",
+          "token": "${SOAR_TOKEN}"
+        }
+      }
+    }
+  ]
+}

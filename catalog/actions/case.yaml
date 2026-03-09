@@ -1,0 +1,159 @@
+actions:
+
+  - id: create_case
+    name: Create Case
+    domain: case
+    description: >
+      Create a new incident/case record in the provider's case management or
+      SIEM system. Returns a case_id that can be referenced in subsequent
+      append_note and add_artifact actions.
+    risk_level: low
+    approval_mode: none
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: title
+        type: string
+        required: true
+        description: Case/incident title.
+        example: "Ransomware Infection — HOSTNAME-01"
+      - name: description
+        type: string
+        required: false
+        description: Detailed description of the incident.
+        default: ""
+      - name: severity
+        type: string
+        required: false
+        default: medium
+        enum:
+          - informational
+          - low
+          - medium
+          - high
+          - critical
+        description: Incident severity level.
+      - name: assigned_to
+        type: string
+        required: false
+        description: Analyst UPN or team queue to assign the case to.
+      - name: tags
+        type: list
+        required: false
+        description: List of tags to apply to the case.
+    outputs:
+      - name: case_id
+        type: string
+        description: Unique case identifier in the provider system.
+      - name: title
+        type: string
+        description: Case title.
+      - name: timestamp
+        type: string
+        description: ISO 8601 creation timestamp.
+    d3fend_mappings: []
+    attack_mappings: []
+    tags:
+      - case
+      - ticketing
+      - workflow
+
+  - id: append_note
+    name: Append Note to Case
+    domain: case
+    description: >
+      Append a text note or comment to an existing incident case. Used to log
+      analyst observations, action results, and decision rationale during
+      an active investigation.
+    risk_level: low
+    approval_mode: none
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: case_id
+        type: string
+        required: true
+        description: Case identifier returned by create_case.
+        example: "CS-1A2B3C4D"
+      - name: note
+        type: string
+        required: true
+        description: Note or comment text to append.
+        example: "Host isolated at 14:32 UTC. Awaiting forensic imaging."
+      - name: author
+        type: string
+        required: false
+        description: Analyst name or system identifier.
+        default: "OpenSecOps"
+    outputs:
+      - name: case_id
+        type: string
+        description: Case the note was appended to.
+      - name: note_appended
+        type: boolean
+        description: Whether the note was added successfully.
+    d3fend_mappings: []
+    attack_mappings: []
+    tags:
+      - case
+      - documentation
+      - workflow
+
+  - id: add_artifact
+    name: Add Artifact to Case
+    domain: case
+    description: >
+      Attach an observable or artifact (IP address, file hash, URL, domain,
+      username, etc.) to an existing case for tracking and correlation.
+    risk_level: low
+    approval_mode: none
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: case_id
+        type: string
+        required: true
+        description: Case identifier returned by create_case.
+        example: "CS-1A2B3C4D"
+      - name: artifact_type
+        type: string
+        required: true
+        enum:
+          - ip
+          - domain
+          - url
+          - file_hash
+          - email
+          - username
+          - hostname
+          - other
+        description: Type of observable/artifact.
+      - name: artifact_value
+        type: string
+        required: true
+        description: Value of the artifact (e.g. the IP address, hash, etc.).
+        example: "198.51.100.42"
+      - name: description
+        type: string
+        required: false
+        description: Human-readable description of the artifact.
+        default: ""
+    outputs:
+      - name: artifact_id
+        type: string
+        description: Provider-specific artifact/bookmark identifier.
+      - name: case_id
+        type: string
+        description: Case the artifact was attached to.
+    d3fend_mappings: []
+    attack_mappings: []
+    tags:
+      - case
+      - observable
+      - workflow

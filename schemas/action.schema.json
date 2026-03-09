@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensecops.dev/schemas/action.schema.json",
+  "title": "OpenSecOps Action Definition",
+  "description": "Schema for a single OpenSecOps action definition as stored in the YAML catalog.",
+  "type": "object",
+  "required": ["id", "name", "domain", "description", "risk_level", "supported_providers"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Unique action identifier in snake_case.",
+      "examples": ["isolate_host", "block_ip"]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable action name."
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["endpoint", "identity", "email", "network", "case"],
+      "description": "Security domain this action belongs to."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What this action does."
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Risk classification of the action."
+    },
+    "approval_mode": {
+      "type": "string",
+      "enum": ["none", "soft", "hard"],
+      "default": "none",
+      "description": "Human approval requirement."
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "Action schema version."
+    },
+    "supported_providers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Provider IDs that implement this action."
+    },
+    "inputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ActionInput" },
+      "default": []
+    },
+    "outputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ActionOutput" },
+      "default": []
+    },
+    "d3fend_mappings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/D3FENDMapping" },
+      "default": []
+    },
+    "attack_mappings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ATTACKMapping" },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    }
+  },
+  "$defs": {
+    "ActionInput": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "integer", "boolean", "number", "list", "dict"]
+        },
+        "required": {
+          "type": "boolean",
+          "default": true
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "default": {},
+        "enum": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "example": {}
+      }
+    },
+    "ActionOutput": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "integer", "boolean", "number", "list", "dict"]
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "example": {}
+      }
+    },
+    "D3FENDMapping": {
+      "type": "object",
+      "required": ["technique_id", "technique_name"],
+      "additionalProperties": false,
+      "properties": {
+        "technique_id": {
+          "type": "string",
+          "pattern": "^D3-"
+        },
+        "technique_name": {
+          "type": "string"
+        },
+        "tactic": {
+          "type": "string",
+          "default": ""
+        },
+        "url": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "ATTACKMapping": {
+      "type": "object",
+      "required": ["technique_id", "technique_name"],
+      "additionalProperties": false,
+      "properties": {
+        "technique_id": {
+          "type": "string",
+          "pattern": "^T[0-9]"
+        },
+        "technique_name": {
+          "type": "string"
+        },
+        "tactic": {
+          "type": "string",
+          "default": ""
+        },
+        "url": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensecops.dev/schemas/playbook.schema.json",
+  "title": "OpenSecOps Playbook",
+  "description": "Schema for an OpenSecOps response playbook YAML file.",
+  "type": "object",
+  "required": ["id", "name", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$",
+      "description": "Unique playbook identifier."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0.0"
+    },
+    "author": {
+      "type": "string",
+      "default": ""
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["informational", "low", "medium", "high", "critical"],
+      "default": "medium"
+    },
+    "triggers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ATT&CK technique IDs or alert names that trigger this playbook.",
+      "default": []
+    },
+    "inputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/PlaybookInput" },
+      "default": []
+    },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/PlaybookStep" },
+      "minItems": 1
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    }
+  },
+  "$defs": {
+    "PlaybookInput": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "default": "string" },
+        "required": { "type": "boolean", "default": true },
+        "description": { "type": "string", "default": "" },
+        "default": {},
+        "example": {}
+      }
+    },
+    "PlaybookStep": {
+      "type": "object",
+      "required": ["id", "action_id", "provider"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "action_id": {
+          "type": "string",
+          "description": "OpenSecOps action ID to execute."
+        },
+        "provider": {
+          "type": "string",
+          "description": "Provider adapter to use."
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": true,
+          "default": {}
+        },
+        "condition": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Optional boolean expression to gate this step."
+        },
+        "on_success": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Step ID to jump to on success."
+        },
+        "on_failure": {
+          "type": "string",
+          "enum": ["stop", "continue", "skip"],
+          "default": "stop"
+        },
+        "dry_run": {
+          "type": "boolean",
+          "default": false
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    }
+  }
+}
