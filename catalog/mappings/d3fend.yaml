@@ -1,0 +1,146 @@
+# MITRE D3FEND technique catalog (subset)
+# Source: https://d3fend.mitre.org/
+# Last updated: 2024-01
+# Note: This is a curated subset relevant to common SOC response actions.
+# For the complete ontology, see https://d3fend.mitre.org/full-mappings/
+
+techniques:
+
+  D3-NI:
+    id: D3-NI
+    name: Network Isolation
+    tactic: Isolate
+    description: >
+      Restrict access to a component or group of components to a limited
+      number of nodes, either physical or logical, preventing lateral movement
+      and C2 communication while retaining telemetry.
+    counters_attack:
+      - T1021
+      - T1071
+      - T1090
+      - T1486
+      - T1210
+    url: https://d3fend.mitre.org/technique/d3f:NetworkIsolation
+
+  D3-PT:
+    id: D3-PT
+    name: Process Termination
+    tactic: Evict
+    description: >
+      Send a signal to a process instructing it to stop. Used to terminate
+      active malware, C2 agents, and ransomware encryption threads.
+    counters_attack:
+      - T1059
+      - T1055
+      - T1204
+    url: https://d3fend.mitre.org/technique/d3f:ProcessTermination
+
+  D3-UAP:
+    id: D3-UAP
+    name: User Account Permissions
+    tactic: Harden
+    description: >
+      Manage the access permissions of user accounts, including disabling
+      accounts, revoking privileges, and enforcing least-privilege principles.
+    counters_attack:
+      - T1078
+      - T1110
+      - T1098
+    url: https://d3fend.mitre.org/technique/d3f:UserAccountPermissions
+
+  D3-CR:
+    id: D3-CR
+    name: Credential Reset
+    tactic: Restore
+    description: >
+      Reset or change authentication credentials, including passwords and
+      cryptographic keys, to evict an attacker who has obtained valid credentials.
+    counters_attack:
+      - T1110
+      - T1556
+      - T1078
+    url: https://d3fend.mitre.org/technique/d3f:CredentialReset
+
+  D3-MFD:
+    id: D3-MFD
+    name: Message Filtering
+    tactic: Harden
+    description: >
+      Filter messages based on content, sender, or other attributes to prevent
+      malicious messages (phishing, spam, malware delivery) from reaching users.
+    counters_attack:
+      - T1566
+      - T1566.001
+      - T1566.002
+      - T1598
+    url: https://d3fend.mitre.org/technique/d3f:MessageFiltering
+
+  D3-IB:
+    id: D3-IB
+    name: IP Blacklisting
+    tactic: Isolate
+    description: >
+      Block network traffic to or from specific IP addresses known or suspected
+      to be malicious, including C2 servers, scanning infrastructure, and
+      exfiltration endpoints.
+    counters_attack:
+      - T1071
+      - T1041
+      - T1048
+      - T1219
+    url: https://d3fend.mitre.org/technique/d3f:IPBlacklisting
+
+  D3-NTF:
+    id: D3-NTF
+    name: Network Traffic Filtering
+    tactic: Harden
+    description: >
+      Inspect and selectively deny network traffic based on rules, signatures,
+      or reputation data. Provides defence-in-depth against C2 communication
+      and data exfiltration.
+    counters_attack:
+      - T1071
+      - T1041
+      - T1048
+      - T1095
+    url: https://d3fend.mitre.org/technique/d3f:NetworkTrafficFiltering
+
+  D3-EFI:
+    id: D3-EFI
+    name: Executable File Investigation
+    tactic: Detect
+    description: >
+      Investigate an executable file to determine if it is malicious, including
+      static analysis, signature matching, and sandboxed execution.
+    counters_attack:
+      - T1204
+      - T1059
+      - T1566
+    url: https://d3fend.mitre.org/technique/d3f:ExecutableFileInvestigation
+
+  D3-IDA:
+    id: D3-IDA
+    name: Identifier Activity Analysis
+    tactic: Detect
+    description: >
+      Analyse activity associated with an identifier (file hash, domain, IP, URL)
+      to detect anomalous or malicious patterns.
+    counters_attack:
+      - T1204
+      - T1566
+      - T1071
+    url: https://d3fend.mitre.org/technique/d3f:IdentifierActivityAnalysis
+
+  D3-DNSAL:
+    id: D3-DNSAL
+    name: DNS Allowlisting
+    tactic: Harden
+    description: >
+      Restrict DNS resolution to an approved set of domains or resolvers,
+      preventing access to malicious domains used for C2, phishing, or malware
+      delivery.
+    counters_attack:
+      - T1566
+      - T1583.001
+      - T1071.004
+    url: https://d3fend.mitre.org/technique/d3f:DNSAllowlisting

@@ -1,0 +1,125 @@
+actions:
+
+  - id: block_ip
+    name: Block IP Address
+    domain: network
+    description: >
+      Block inbound and/or outbound traffic to/from a specific IP address using
+      the provider's network control capabilities (EDR IOC, firewall policy,
+      network access control, etc.).
+    risk_level: medium
+    approval_mode: none
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: ip_address
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to block.
+        example: "198.51.100.42"
+      - name: direction
+        type: string
+        required: false
+        default: both
+        enum:
+          - inbound
+          - outbound
+          - both
+        description: Traffic direction to block.
+      - name: reason
+        type: string
+        required: false
+        description: Reason for block (audit log).
+        default: "Blocked via OpenSecOps"
+      - name: expiry_hours
+        type: integer
+        required: false
+        description: Auto-expire the block after this many hours. 0 = permanent.
+        default: 0
+    outputs:
+      - name: ip_address
+        type: string
+        description: IP address that was blocked.
+      - name: direction
+        type: string
+        description: Effective block direction.
+      - name: rule_id
+        type: string
+        description: Provider-specific rule or indicator ID.
+      - name: blocked
+        type: boolean
+        description: Whether the block was applied.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-IB
+        technique_name: IP Blacklisting
+        tactic: Isolate
+      - technique_id: D3-NTF
+        technique_name: Network Traffic Filtering
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1071
+        technique_name: Application Layer Protocol
+        tactic: Command and Control
+      - technique_id: T1048
+        technique_name: Exfiltration Over Alternative Protocol
+        tactic: Exfiltration
+      - technique_id: T1041
+        technique_name: Exfiltration Over C2 Channel
+        tactic: Exfiltration
+    tags:
+      - network
+      - block
+      - c2
+      - exfiltration
+
+  - id: unblock_ip
+    name: Unblock IP Address
+    domain: network
+    description: >
+      Remove a block on a specific IP address, restoring normal traffic flow.
+      Should only be performed after threat investigation is complete and the
+      IP has been determined to be safe or the block has expired.
+    risk_level: low
+    approval_mode: none
+    supported_providers:
+      - crowdstrike
+      - defender
+      - splunk_soar
+    inputs:
+      - name: ip_address
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to unblock.
+        example: "198.51.100.42"
+      - name: rule_id
+        type: string
+        required: false
+        description: Provider-specific rule or indicator ID to remove.
+      - name: reason
+        type: string
+        required: false
+        description: Reason for unblocking (audit log).
+        default: "Unblocked via OpenSecOps"
+    outputs:
+      - name: ip_address
+        type: string
+        description: IP address that was unblocked.
+      - name: rule_id
+        type: string
+        description: Rule or indicator that was removed.
+      - name: unblocked
+        type: boolean
+        description: Whether the unblock was successful.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings: []
+    attack_mappings: []
+    tags:
+      - network
+      - remediation

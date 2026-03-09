@@ -1,0 +1,100 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opensecops"
+version = "0.1.0"
+description = "Vendor-neutral SOC response abstraction framework"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+authors = [
+    { name = "OpenSecOps Contributors" },
+]
+keywords = [
+    "security",
+    "soar",
+    "soc",
+    "incident-response",
+    "mitre",
+    "d3fend",
+    "crowdstrike",
+    "defender",
+    "splunk",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: System :: Systems Administration",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.6,<3",
+    "pyyaml>=6.0",
+    "jsonschema>=4.21",
+    "typer>=0.12",
+    "rich>=13.7",
+    "click>=8.1",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "mypy>=1.9",
+    "ruff>=0.4",
+    "types-pyyaml",
+    "types-jsonschema",
+]
+
+[project.scripts]
+opensecops = "opensecops.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/opensecops/opensecops"
+Documentation = "https://github.com/opensecops/opensecops#readme"
+Repository = "https://github.com/opensecops/opensecops"
+Issues = "https://github.com/opensecops/opensecops/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opensecops"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "catalog/",
+    "schemas/",
+    "playbooks/",
+    "tests/",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "TCH"]
+ignore = ["E501"]
+
+[tool.coverage.run]
+source = ["src/opensecops"]
+omit = ["*/tests/*"]

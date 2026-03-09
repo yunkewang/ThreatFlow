@@ -1,0 +1,129 @@
+id: phishing_response
+name: Phishing Email Response
+description: >
+  Response playbook for confirmed phishing emails delivered to users.
+  Creates a case, purges the email from affected mailboxes, blocks the
+  sender and domain, and documents all IOCs.
+
+  Designed for T1566 (Phishing) scenarios.
+version: "1.0.0"
+author: "OpenSecOps Community"
+severity: medium
+triggers:
+  - T1566
+  - T1566.001
+  - T1566.002
+tags:
+  - phishing
+  - email
+  - initial-access
+references:
+  - https://attack.mitre.org/techniques/T1566/
+
+inputs:
+  - name: sender_address
+    type: string
+    required: true
+    description: Malicious sender email address.
+    example: "attacker@evil-phish.com"
+
+  - name: sender_domain
+    type: string
+    required: true
+    description: Domain of the malicious sender.
+    example: "evil-phish.com"
+
+  - name: message_id
+    type: string
+    required: false
+    description: SMTP Message-ID of the phishing email.
+    example: "<phish123@evil-phish.com>"
+
+  - name: recipient
+    type: string
+    required: false
+    description: Primary recipient UPN. Leave blank to purge from all mailboxes.
+    example: "victim@corp.com"
+
+  - name: incident_title
+    type: string
+    required: false
+    description: Incident title.
+    default: "Phishing Email Detected and Remediated"
+
+steps:
+
+  - id: create_case
+    name: Create phishing incident case
+    action_id: create_case
+    provider: defender
+    inputs:
+      title: "{{ incident_title }}"
+      description: "Phishing email from {{ sender_address }} confirmed. Remediation in progress."
+      severity: medium
+    on_failure: stop
+
+  - id: block_sender
+    name: Block malicious sender
+    action_id: block_sender
+    provider: defender
+    inputs:
+      sender: "{{ sender_address }}"
+      reason: "Confirmed phishing — case {{ create_case.case_id }}"
+    on_failure: continue
+
+  - id: block_domain
+    name: Block malicious domain
+    action_id: block_domain
+    provider: defender
+    inputs:
+      domain: "{{ sender_domain }}"
+      reason: "Phishing campaign domain — case {{ create_case.case_id }}"
+    on_failure: continue
+
+  - id: purge_email
+    name: Purge phishing email from mailboxes
+    action_id: purge_email
+    provider: defender
+    inputs:
+      message_id: "{{ message_id }}"
+      recipient: "{{ recipient }}"
+      purge_type: SoftDelete
+    on_failure: continue
+
+  - id: add_sender_artifact
+    name: Document sender as artifact
+    action_id: add_artifact
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: email
+      artifact_value: "{{ sender_address }}"
+      description: "Phishing sender address"
+    on_failure: continue
+
+  - id: add_domain_artifact
+    name: Document domain as artifact
+    action_id: add_artifact
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: domain
+      artifact_value: "{{ sender_domain }}"
+      description: "Phishing campaign domain"
+    on_failure: continue
+
+  - id: final_note
+    name: Log remediation summary
+    action_id: append_note
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      note: >
+        Phishing remediation complete.
+        Sender blocked: {{ sender_address }}
+        Domain blocked: {{ sender_domain }}
+        Email purge submitted for: {{ recipient }}
+        Analysts should verify with affected users and check for credential compromise.
+      author: "OpenSecOps"
+    on_failure: continue

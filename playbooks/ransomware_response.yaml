@@ -1,0 +1,128 @@
+id: ransomware_response
+name: Ransomware Incident Response
+description: >
+  Standardised response playbook for active ransomware incidents.
+  Isolates the affected host, creates an incident case, logs key actions,
+  blocks the identified C2 IP, and documents the IOCs.
+
+  Designed for T1486 (Data Encrypted for Impact) scenarios.
+version: "1.0.0"
+author: "OpenSecOps Community"
+severity: critical
+triggers:
+  - T1486
+  - T1490
+tags:
+  - ransomware
+  - endpoint
+  - critical
+references:
+  - https://attack.mitre.org/techniques/T1486/
+  - https://www.cisa.gov/stopransomware
+
+inputs:
+  - name: host_id
+    type: string
+    required: true
+    description: Affected host ID (EDR device identifier).
+    example: "abc1234567890abcdef1234567890ab"
+
+  - name: analyst_upn
+    type: string
+    required: false
+    description: Analyst UPN for case assignment.
+    default: "soc-team@corp.com"
+
+  - name: c2_ip
+    type: string
+    required: false
+    description: Identified C2 IP address to block. Leave blank to skip.
+    example: "198.51.100.100"
+
+  - name: incident_title
+    type: string
+    required: false
+    description: Incident title for the created case.
+    default: "Ransomware Infection — Active Encryption Detected"
+
+steps:
+
+  - id: create_case
+    name: Create incident case
+    action_id: create_case
+    provider: crowdstrike
+    inputs:
+      title: "{{ incident_title }}"
+      description: >
+        Active ransomware infection detected. Host isolation and containment
+        initiated. See attached artifacts for IOCs.
+      severity: critical
+      assigned_to: "{{ analyst_upn }}"
+    on_failure: stop
+
+  - id: isolate_host
+    name: Isolate affected host
+    action_id: isolate_host
+    provider: crowdstrike
+    inputs:
+      host_id: "{{ host_id }}"
+      comment: "Ransomware isolation — case {{ create_case.case_id }}"
+    on_failure: stop
+
+  - id: log_isolation
+    name: Log isolation in case
+    action_id: append_note
+    provider: crowdstrike
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      note: >
+        Host {{ host_id }} isolated at action completion.
+        Containment status: {{ isolate_host.status }}.
+        Next step: forensic imaging, then run kill_process on active encryption threads.
+      author: "OpenSecOps"
+    on_failure: continue
+
+  - id: add_host_artifact
+    name: Document affected host as artifact
+    action_id: add_artifact
+    provider: crowdstrike
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: hostname
+      artifact_value: "{{ host_id }}"
+      description: "Primary affected host"
+    on_failure: continue
+
+  - id: block_c2
+    name: Block C2 IP address
+    action_id: block_ip
+    provider: crowdstrike
+    condition: "c2_ip != ''"
+    inputs:
+      ip_address: "{{ c2_ip }}"
+      direction: both
+      reason: "Ransomware C2 — case {{ create_case.case_id }}"
+    on_failure: continue
+
+  - id: log_c2_block
+    name: Log C2 block in case
+    action_id: append_note
+    provider: crowdstrike
+    condition: "c2_ip != ''"
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      note: "C2 IP {{ c2_ip }} blocked (rule {{ block_c2.rule_id }})."
+      author: "OpenSecOps"
+    on_failure: continue
+
+  - id: add_c2_artifact
+    name: Document C2 IP as artifact
+    action_id: add_artifact
+    provider: crowdstrike
+    condition: "c2_ip != ''"
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: ip
+      artifact_value: "{{ c2_ip }}"
+      description: "Identified C2 server"
+    on_failure: continue

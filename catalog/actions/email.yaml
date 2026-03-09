@@ -1,0 +1,170 @@
+actions:
+
+  - id: purge_email
+    name: Purge Email Message
+    domain: email
+    description: >
+      Soft-delete or hard-delete a specific email message from a user's mailbox,
+      or across all mailboxes in the tenant for a given message ID or subject.
+      Used to remove phishing or malware-bearing emails post-delivery.
+    risk_level: medium
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: message_id
+        type: string
+        required: false
+        description: SMTP Message-ID header value.
+        example: "<unique-id@mail.example.com>"
+      - name: recipient
+        type: string
+        required: false
+        description: Recipient mailbox UPN. If blank, purges from all mailboxes.
+        example: "victim@corp.com"
+      - name: subject
+        type: string
+        required: false
+        description: Email subject for targeted search (used when message_id unavailable).
+      - name: purge_type
+        type: string
+        required: false
+        default: SoftDelete
+        enum:
+          - SoftDelete
+          - HardDelete
+        description: >
+          SoftDelete moves to Deleted Items (recoverable).
+          HardDelete permanently removes the message.
+    outputs:
+      - name: message_id
+        type: string
+        description: Message ID that was targeted.
+      - name: recipient
+        type: string
+        description: Recipient mailbox (or 'all').
+      - name: purge_type
+        type: string
+        description: Type of purge performed.
+      - name: purged
+        type: boolean
+        description: Whether the purge was submitted successfully.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-MFD
+        technique_name: Message Filtering
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1566
+        technique_name: Phishing
+        tactic: Initial Access
+      - technique_id: T1566.001
+        technique_name: Spearphishing Attachment
+        tactic: Initial Access
+    tags:
+      - email
+      - phishing
+      - remediation
+
+  - id: block_sender
+    name: Block Email Sender
+    domain: email
+    description: >
+      Add an email address to the tenant-level blocked senders list, preventing
+      future delivery from this sender to any mailbox in the organisation.
+    risk_level: low
+    approval_mode: none
+    supported_providers:
+      - defender
+      - splunk_soar
+    inputs:
+      - name: sender
+        type: string
+        required: true
+        description: Email address to block.
+        example: "attacker@evil.com"
+      - name: reason
+        type: string
+        required: false
+        description: Reason for blocking (audit log).
+        default: "Blocked via OpenSecOps"
+    outputs:
+      - name: sender
+        type: string
+        description: Email address that was blocked.
+      - name: blocked
+        type: boolean
+        description: Whether the block was applied.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-MFD
+        technique_name: Message Filtering
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1566
+        technique_name: Phishing
+        tactic: Initial Access
+    tags:
+      - email
+      - phishing
+      - block
+
+  - id: block_domain
+    name: Block Email Domain
+    domain: email
+    description: >
+      Block an entire domain from sending email into the organisation, using
+      the provider's tenant-level allow/block list or mail flow rules.
+      Use with caution for high-traffic shared domains (e.g. gmail.com).
+    risk_level: medium
+    approval_mode: soft
+    supported_providers:
+      - defender
+      - splunk_soar
+    inputs:
+      - name: domain
+        type: string
+        required: true
+        description: Domain to block (e.g. evil.com).
+        example: "evil-phish.com"
+      - name: reason
+        type: string
+        required: false
+        description: Reason for blocking.
+        default: "Blocked due to phishing campaign"
+    outputs:
+      - name: domain
+        type: string
+        description: Domain that was blocked.
+      - name: entry_id
+        type: string
+        description: Provider-specific block list entry ID.
+      - name: blocked
+        type: boolean
+        description: Whether the block was applied.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-MFD
+        technique_name: Message Filtering
+        tactic: Harden
+      - technique_id: D3-DNSAL
+        technique_name: DNS Allowlisting
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1566
+        technique_name: Phishing
+        tactic: Initial Access
+      - technique_id: T1583.001
+        technique_name: "Acquire Infrastructure: Domains"
+        tactic: Resource Development
+    tags:
+      - email
+      - domain
+      - block
+      - phishing

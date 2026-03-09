@@ -1,0 +1,147 @@
+id: compromised_account_response
+name: Compromised Account Response
+description: >
+  Response playbook for a confirmed compromised user account.
+  Revokes active sessions, disables the account, forces a password reset,
+  and creates a case with full documentation.
+
+  Designed for T1078 (Valid Accounts) and T1110 (Brute Force) scenarios.
+version: "1.0.0"
+author: "OpenSecOps Community"
+severity: high
+triggers:
+  - T1078
+  - T1110
+  - T1550
+tags:
+  - identity
+  - account
+  - credential
+references:
+  - https://attack.mitre.org/techniques/T1078/
+  - https://attack.mitre.org/techniques/T1110/
+
+inputs:
+  - name: user_upn
+    type: string
+    required: true
+    description: UPN of the compromised user account.
+    example: "jdoe@corp.com"
+
+  - name: attacker_ip
+    type: string
+    required: false
+    description: Attacker IP address (if known). Leave blank to skip network block.
+    example: ""
+
+  - name: reason
+    type: string
+    required: false
+    description: Reason for the account action.
+    default: "Account compromise confirmed — suspicious sign-in activity"
+
+  - name: incident_title
+    type: string
+    required: false
+    description: Incident title.
+    default: "Compromised Account Response"
+
+steps:
+
+  - id: create_case
+    name: Create incident case
+    action_id: create_case
+    provider: defender
+    inputs:
+      title: "{{ incident_title }}: {{ user_upn }}"
+      description: "Confirmed account compromise for {{ user_upn }}. Containment initiated."
+      severity: high
+    on_failure: stop
+
+  - id: revoke_sessions
+    name: Revoke all active sessions
+    action_id: revoke_session
+    provider: defender
+    inputs:
+      user_upn: "{{ user_upn }}"
+    on_failure: stop
+
+  - id: log_revoke
+    name: Log session revocation
+    action_id: append_note
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      note: "All sessions revoked for {{ user_upn }} at step completion. User will be forced to re-authenticate."
+      author: "OpenSecOps"
+    on_failure: continue
+
+  - id: disable_account
+    name: Disable user account
+    action_id: disable_user
+    provider: defender
+    inputs:
+      user_upn: "{{ user_upn }}"
+      reason: "{{ reason }}"
+    on_failure: stop
+
+  - id: log_disable
+    name: Log account disable
+    action_id: append_note
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      note: "Account {{ user_upn }} disabled. Account enabled status: {{ disable_account.account_enabled }}."
+      author: "OpenSecOps"
+    on_failure: continue
+
+  - id: block_attacker_ip
+    name: Block attacker IP (if known)
+    action_id: block_ip
+    provider: defender
+    condition: "attacker_ip != ''"
+    inputs:
+      ip_address: "{{ attacker_ip }}"
+      direction: both
+      reason: "Attacker IP for compromised account {{ user_upn }}"
+    on_failure: continue
+
+  - id: add_user_artifact
+    name: Document compromised account as artifact
+    action_id: add_artifact
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: username
+      artifact_value: "{{ user_upn }}"
+      description: "Compromised user account"
+    on_failure: continue
+
+  - id: add_ip_artifact
+    name: Document attacker IP as artifact
+    action_id: add_artifact
+    provider: defender
+    condition: "attacker_ip != ''"
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: ip
+      artifact_value: "{{ attacker_ip }}"
+      description: "Attacker origin IP"
+    on_failure: continue
+
+  - id: final_note
+    name: Document next steps
+    action_id: append_note
+    provider: defender
+    inputs:
+      case_id: "{{ create_case.case_id }}"
+      note: >
+        Initial containment complete for {{ user_upn }}.
+        REQUIRED MANUAL STEPS:
+        1. Notify user and manager.
+        2. Run reset_password action after verifying new contact channel.
+        3. Review audit logs for data access during compromise window.
+        4. Check for persistence mechanisms (mail forwarding rules, OAuth app grants).
+        5. Re-enable account only after verification with user.
+      author: "OpenSecOps"
+    on_failure: continue
