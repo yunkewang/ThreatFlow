@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from opensecops.core.registry import ActionRegistry
-from opensecops.core.models import Action, RiskLevel, ApprovalMode
+from threatflow.core.registry import ActionRegistry
+from threatflow.core.models import Action, RiskLevel, ApprovalMode
 
 
 class TestActionRegistry:

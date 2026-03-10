@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opensecops.dev/schemas/provider_config.schema.json",
-  "title": "OpenSecOps Provider Configuration",
+  "$id": "https://threatflow.dev/schemas/provider_config.schema.json",
+  "title": "ThreatFlow Provider Configuration",
   "description": "Schema for a provider adapter configuration file (providers.yaml or providers.json).",
   "type": "object",
   "additionalProperties": false,

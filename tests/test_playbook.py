@@ -9,11 +9,11 @@ from typing import Any
 import pytest
 import yaml
 
-from opensecops.core.executor import ActionExecutor
-from opensecops.core.registry import ActionRegistry
-from opensecops.playbook.executor import PlaybookExecutor, StepStatus
-from opensecops.playbook.models import OnError, Playbook, PlaybookInput, PlaybookStep
-from opensecops.playbook.validator import PlaybookValidationError, PlaybookValidator
+from threatflow.core.executor import ActionExecutor
+from threatflow.core.registry import ActionRegistry
+from threatflow.playbook.executor import PlaybookExecutor, StepStatus
+from threatflow.playbook.models import OnError, Playbook, PlaybookInput, PlaybookStep
+from threatflow.playbook.validator import PlaybookValidationError, PlaybookValidator
 
 
 # ──────────────────────────────────────────────────────────────────────────────

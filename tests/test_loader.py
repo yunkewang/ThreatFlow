@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from opensecops.core.loader import CatalogLoadError, CatalogLoader
+from threatflow.core.loader import CatalogLoadError, CatalogLoader
 
 
 @pytest.fixture()

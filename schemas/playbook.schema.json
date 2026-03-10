@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opensecops.dev/schemas/playbook.schema.json",
-  "title": "OpenSecOps Playbook",
-  "description": "Schema for an OpenSecOps response playbook YAML file.",
+  "$id": "https://threatflow.dev/schemas/playbook.schema.json",
+  "title": "ThreatFlow Playbook",
+  "description": "Schema for an ThreatFlow response playbook YAML file.",
   "type": "object",
   "required": ["id", "name", "steps"],
   "additionalProperties": false,
@@ -89,7 +89,7 @@
         },
         "action_id": {
           "type": "string",
-          "description": "OpenSecOps action ID to execute."
+          "description": "ThreatFlow action ID to execute."
         },
         "provider": {
           "type": "string",

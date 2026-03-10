@@ -88,7 +88,7 @@ actions:
         type: string
         required: false
         description: Analyst name or system identifier.
-        default: "OpenSecOps"
+        default: "ThreatFlow"
     outputs:
       - name: case_id
         type: string

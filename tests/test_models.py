@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from opensecops.core.models import (
+from threatflow.core.models import (
     Action,
     ActionInput,
     ActionOutput,
@@ -181,7 +181,7 @@ class TestValidationResult:
         assert result.errors == []
 
     def test_fail_with_errors(self) -> None:
-        from opensecops.core.models import ValidationError as VError
+        from threatflow.core.models import ValidationError as VError
         result = ValidationResult.fail([VError(field="host_id", message="Required")])
         assert result.valid is False
         assert len(result.errors) == 1

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opensecops.dev/schemas/action.schema.json",
-  "title": "OpenSecOps Action Definition",
-  "description": "Schema for a single OpenSecOps action definition as stored in the YAML catalog.",
+  "$id": "https://threatflow.dev/schemas/action.schema.json",
+  "title": "ThreatFlow Action Definition",
+  "description": "Schema for a single ThreatFlow action definition as stored in the YAML catalog.",
   "type": "object",
   "required": ["id", "name", "domain", "description", "risk_level", "supported_providers"],
   "additionalProperties": false,

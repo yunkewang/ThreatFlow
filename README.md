@@ -17,7 +17,7 @@ ThreatFlow is the *Sigma for response actions* — a standardised schema, action
 - **Provider adapters** — thin translation layers to CrowdStrike, Defender, Splunk SOAR APIs
 - **Playbook engine** — YAML playbooks with variable substitution, conditional steps, and step routing
 - **MITRE integration** — every action maps to D3FEND defensive techniques and ATT&CK techniques it counters
-- **CLI** — `opensecops` command for operators and CI/CD pipelines
+- **CLI** — `threatflow` command for operators and CI/CD pipelines
 
 ## What it is NOT
 
@@ -30,7 +30,7 @@ ThreatFlow is the *Sigma for response actions* — a standardised schema, action
 ## Architecture
 
 ```
-opensecops/
+threatflow/
 ├── core/
 │   ├── models.py        # Pydantic domain models (Action, ExecutionResult, …)
 │   ├── registry.py      # In-memory action registry
@@ -49,10 +49,10 @@ opensecops/
 │   └── mitre.py         # ATT&CK ↔ D3FEND cross-reference index
 └── cli/
     ├── main.py          # CLI app (Typer)
-    ├── actions.py       # `opensecops actions` commands
-    ├── run.py           # `opensecops run` command
-    ├── plan.py          # `opensecops plan` command
-    └── playbook.py      # `opensecops playbook` commands
+    ├── actions.py       # `threatflow actions` commands
+    ├── run.py           # `threatflow run` command
+    ├── plan.py          # `threatflow plan` command
+    └── playbook.py      # `threatflow playbook` commands
 
 catalog/
 ├── actions/             # Action definition YAML files (one file per domain)
@@ -85,12 +85,12 @@ schemas/                 # JSON schemas for validation
 
 ```bash
 # From source (development)
-git clone https://github.com/opensecops/opensecops
-cd opensecops
+git clone https://github.com/threatflow/threatflow
+cd threatflow
 pip install -e ".[dev]"
 
 # From PyPI (when published)
-pip install opensecops
+pip install threatflow
 ```
 
 Requires Python 3.12+.
@@ -102,26 +102,26 @@ Requires Python 3.12+.
 ### Browse the action catalog
 
 ```bash
-opensecops actions list
-opensecops actions list --domain endpoint
-opensecops actions list --provider crowdstrike
-opensecops actions show isolate_host
+threatflow actions list
+threatflow actions list --domain endpoint
+threatflow actions list --provider crowdstrike
+threatflow actions show isolate_host
 ```
 
 ### Run a single action
 
 ```bash
 # Dry-run first (no real API calls)
-opensecops run isolate_host --provider crowdstrike \
+threatflow run isolate_host --provider crowdstrike \
     --param host_id=abc1234567890abcdef1234567890ab \
     --dry-run
 
 # Execute (soft-approval prompt)
-opensecops run isolate_host --provider crowdstrike \
+threatflow run isolate_host --provider crowdstrike \
     --param host_id=abc1234567890abcdef1234567890ab
 
 # Bypass soft approval (--force), useful in automated pipelines
-opensecops run block_ip --provider defender \
+threatflow run block_ip --provider defender \
     --param ip_address=198.51.100.42 \
     --force
 ```
@@ -129,26 +129,26 @@ opensecops run block_ip --provider defender \
 ### Plan a response from an ATT&CK technique
 
 ```bash
-opensecops plan --attack-technique T1486
-opensecops plan --attack-technique T1566 --provider defender
+threatflow plan --attack-technique T1486
+threatflow plan --attack-technique T1566 --provider defender
 ```
 
 ### Validate a playbook
 
 ```bash
-opensecops playbook validate playbooks/ransomware_response.yaml
+threatflow playbook validate playbooks/ransomware_response.yaml
 ```
 
 ### Run a playbook
 
 ```bash
 # Dry-run all steps
-opensecops playbook run playbooks/ransomware_response.yaml \
+threatflow playbook run playbooks/ransomware_response.yaml \
     --inputs incident_inputs.json \
     --dry-run
 
 # Live run
-opensecops playbook run playbooks/compromised_account.yaml \
+threatflow playbook run playbooks/compromised_account.yaml \
     --inputs inputs.json \
     --force
 ```
@@ -298,9 +298,9 @@ executor.register_adapter("my_platform", MyAdapter(config={"url": "..."}))
 ## Python API
 
 ```python
-from opensecops.core.loader import CatalogLoader
-from opensecops.core.executor import ActionExecutor
-from opensecops.adapters.crowdstrike import CrowdStrikeAdapter
+from threatflow.core.loader import CatalogLoader
+from threatflow.core.executor import ActionExecutor
+from threatflow.adapters.crowdstrike import CrowdStrikeAdapter
 
 # Load catalog
 registry = CatalogLoader().load_default_catalog()
@@ -319,8 +319,8 @@ result = executor.execute(
 print(result.success, result.outputs)
 
 # Run a playbook
-from opensecops.playbook.validator import PlaybookValidator
-from opensecops.playbook.executor import PlaybookExecutor
+from threatflow.playbook.validator import PlaybookValidator
+from threatflow.playbook.executor import PlaybookExecutor
 from pathlib import Path
 
 playbook = PlaybookValidator(registry).validate_file(Path("playbooks/ransomware_response.yaml"))
@@ -334,8 +334,8 @@ print(result.success, result.steps_succeeded)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `OPENSECOPS_CATALOG_DIR` | `./catalog/actions` | Override the action catalog directory |
-| `OPENSECOPS_MAPPINGS_DIR` | `./catalog/mappings` | Override the MITRE mappings directory |
+| `THREATFLOW_CATALOG_DIR` | `./catalog/actions` | Override the action catalog directory |
+| `THREATFLOW_MAPPINGS_DIR` | `./catalog/mappings` | Override the MITRE mappings directory |
 
 ---
 
@@ -349,7 +349,7 @@ pip install -e ".[dev]"
 pytest
 
 # With coverage
-pytest --cov=opensecops --cov-report=term-missing
+pytest --cov=threatflow --cov-report=term-missing
 
 # Specific test file
 pytest tests/test_adapters.py -v

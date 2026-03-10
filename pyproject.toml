@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "opensecops"
+name = "threatflow"
 version = "0.1.0"
 description = "Vendor-neutral SOC response abstraction framework"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
 authors = [
-    { name = "OpenSecOps Contributors" },
+    { name = "ThreatFlow Contributors" },
 ]
 keywords = [
     "security",
@@ -57,16 +57,16 @@ dev = [
 ]
 
 [project.scripts]
-opensecops = "opensecops.cli.main:app"
+threatflow = "threatflow.cli.main:app"
 
 [project.urls]
-Homepage = "https://github.com/opensecops/opensecops"
-Documentation = "https://github.com/opensecops/opensecops#readme"
-Repository = "https://github.com/opensecops/opensecops"
-Issues = "https://github.com/opensecops/opensecops/issues"
+Homepage = "https://github.com/threatflow/threatflow"
+Documentation = "https://github.com/threatflow/threatflow#readme"
+Repository = "https://github.com/threatflow/threatflow"
+Issues = "https://github.com/threatflow/threatflow/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/opensecops"]
+packages = ["src/threatflow"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -96,5 +96,5 @@ select = ["E", "F", "I", "UP", "B", "SIM", "TCH"]
 ignore = ["E501"]
 
 [tool.coverage.run]
-source = ["src/opensecops"]
+source = ["src/threatflow"]
 omit = ["*/tests/*"]

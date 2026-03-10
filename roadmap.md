@@ -1,4 +1,4 @@
-# OpenSecOps Roadmap
+# ThreatFlow Roadmap
 
 This document captures planned features, design decisions, and community priorities.
 It is updated quarterly. Items are roughly ordered by priority within each milestone.
@@ -44,7 +44,7 @@ It is updated quarterly. Items are roughly ordered by priority within each miles
   - Graph API user disable/revoke/reset-password
   - EXO sender/domain blocking
 - [ ] Provider config file support (`providers.yaml` with env var interpolation)
-- [ ] `opensecops providers list` / `opensecops providers check` CLI commands
+- [ ] `threatflow providers list` / `threatflow providers check` CLI commands
 - [ ] Adapter connectivity test (`adapter.ping()`)
 
 ---
@@ -59,7 +59,7 @@ It is updated quarterly. Items are roughly ordered by priority within each miles
 - [ ] Playbook-level rollback steps (`on_failure_playbook_rollback: true`)
 - [ ] Import/include support for shared step libraries
 - [ ] Playbook output declaration (formal output schema)
-- [ ] `opensecops playbook list` command (index of available playbooks)
+- [ ] `threatflow playbook list` command (index of available playbooks)
 - [ ] JSON output for all CLI commands (`--json` flag complete)
 
 ---
@@ -96,7 +96,7 @@ Community-contributed adapter targets (in rough priority order):
 
 **Goal:** Stable API, comprehensive adapter coverage, community validation.
 
-- [ ] Stable public API (`opensecops.core`, `opensecops.adapters.base`) — semver guarantees
+- [ ] Stable public API (`threatflow.core`, `threatflow.adapters.base`) — semver guarantees
 - [ ] Published to PyPI
 - [ ] CI/CD integration guide (GitHub Actions, GitLab CI, Jenkins)
 - [ ] CACAO-compatible playbook export/import
@@ -116,7 +116,7 @@ These are ideas raised by the community that need more design work:
 - **Playbook testing framework** — mock adapter for CI-based playbook testing
 - **Visual playbook editor** — a minimal web UI for playbook authoring (not a full SOAR)
 - **Threat intel enrichment** — auto-enrich IOCs before blocking (VirusTotal, MISP)
-- **Multi-tenancy** — run OpenSecOps as a shared service with per-tenant provider configs
+- **Multi-tenancy** — run ThreatFlow as a shared service with per-tenant provider configs
 - **gRPC API** — server mode for programmatic integration from other tools
 
 ---

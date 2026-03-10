@@ -1,5 +1,5 @@
 """
-Example: Writing a custom provider adapter for OpenSecOps.
+Example: Writing a custom provider adapter for ThreatFlow.
 
 This file demonstrates how to implement a new provider adapter from scratch.
 The example adapter connects to a hypothetical "AcmeSIEM" platform.
@@ -18,8 +18,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from opensecops.adapters.base import BaseAdapter, NativeActionMapping
-from opensecops.core.models import Action, ExecutionResult, ProviderInfo
+from threatflow.adapters.base import BaseAdapter, NativeActionMapping
+from threatflow.core.models import Action, ExecutionResult, ProviderInfo
 
 
 class AcmeSIEMAdapter(BaseAdapter):
@@ -59,7 +59,7 @@ class AcmeSIEMAdapter(BaseAdapter):
         return ProviderInfo(
             id=self.PROVIDER_ID,
             name="AcmeSIEM",
-            description="Hypothetical SIEM platform adapter for OpenSecOps examples.",
+            description="Hypothetical SIEM platform adapter for ThreatFlow examples.",
             version="0.1.0",
             capabilities=self._CAPABILITIES,
             config_schema={
@@ -206,8 +206,8 @@ class AcmeSIEMAdapter(BaseAdapter):
 # ──────────────────────────────────────────
 
 if __name__ == "__main__":
-    from opensecops.core.loader import CatalogLoader
-    from opensecops.core.executor import ActionExecutor
+    from threatflow.core.loader import CatalogLoader
+    from threatflow.core.executor import ActionExecutor
 
     # Load the catalog
     loader = CatalogLoader(strict=False)

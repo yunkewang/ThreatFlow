@@ -7,7 +7,7 @@ description: >
 
   Designed for T1486 (Data Encrypted for Impact) scenarios.
 version: "1.0.0"
-author: "OpenSecOps Community"
+author: "ThreatFlow Community"
 severity: critical
 triggers:
   - T1486
@@ -79,7 +79,7 @@ steps:
         Host {{ host_id }} isolated at action completion.
         Containment status: {{ isolate_host.status }}.
         Next step: forensic imaging, then run kill_process on active encryption threads.
-      author: "OpenSecOps"
+      author: "ThreatFlow"
     on_failure: continue
 
   - id: add_host_artifact
@@ -112,7 +112,7 @@ steps:
     inputs:
       case_id: "{{ create_case.case_id }}"
       note: "C2 IP {{ c2_ip }} blocked (rule {{ block_c2.rule_id }})."
-      author: "OpenSecOps"
+      author: "ThreatFlow"
     on_failure: continue
 
   - id: add_c2_artifact

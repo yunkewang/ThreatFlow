@@ -1,7 +1,7 @@
 """
-Generate OpenSecOps documentation PDF using ReportLab.
+Generate ThreatFlow documentation PDF using ReportLab.
 Run:  python3.12 docs/generate_pdf.py
-Output: docs/OpenSecOps_Documentation.pdf
+Output: docs/ThreatFlow_Documentation.pdf
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ PAGE_W, PAGE_H = A4
 # Document class with TOC + page numbers
 # ──────────────────────────────────────────────────────────────────────────────
 
-class OpenSecOpsDoc(BaseDocTemplate):
+class ThreatFlowDoc(BaseDocTemplate):
     def __init__(self, filename: str) -> None:
         super().__init__(
             filename,
@@ -115,7 +115,7 @@ def _cover_page(canvas, doc) -> None:
     canvas.rect(0, 0, PAGE_W, 1.8 * cm, fill=1, stroke=0)
     canvas.setFillColor(WHITE)
     canvas.setFont("Helvetica", 8)
-    canvas.drawCentredString(PAGE_W / 2, 0.7 * cm, "OpenSecOps — Vendor-Neutral SOC Response Framework")
+    canvas.drawCentredString(PAGE_W / 2, 0.7 * cm, "ThreatFlow — Vendor-Neutral SOC Response Framework")
     canvas.restoreState()
 
 
@@ -129,7 +129,7 @@ def _content_page(canvas, doc) -> None:
     # Header text
     canvas.setFillColor(SLATE)
     canvas.setFont("Helvetica", 8)
-    canvas.drawString(doc.leftMargin, PAGE_H - doc.topMargin + 0.7 * cm, "OpenSecOps Documentation")
+    canvas.drawString(doc.leftMargin, PAGE_H - doc.topMargin + 0.7 * cm, "ThreatFlow Documentation")
     canvas.drawRightString(PAGE_W - doc.rightMargin, PAGE_H - doc.topMargin + 0.7 * cm, "v0.1.0")
     # Bottom rule + page number
     canvas.setStrokeColor(TEAL)
@@ -285,7 +285,7 @@ def cover_page() -> list:
     return [
         NextPageTemplate("cover"),
         sp(5.5),
-        Paragraph("OpenSecOps", S["Title"]),
+        Paragraph("ThreatFlow", S["Title"]),
         sp(0.3),
         Paragraph("Vendor-Neutral SOC Response Abstraction Framework", S["Subtitle"]),
         sp(0.5),
@@ -295,7 +295,7 @@ def cover_page() -> list:
         Paragraph("Apache 2.0 &nbsp;·&nbsp; Python 3.12+", S["CoverMeta"]),
         sp(1.5),
         Paragraph(
-            "OpenSecOps standardises security response actions across CrowdStrike Falcon, "
+            "ThreatFlow standardises security response actions across CrowdStrike Falcon, "
             "Microsoft Defender, Splunk SOAR, and custom tools — providing a unified schema, "
             "action catalog, playbook engine, and CLI.",
             ParagraphStyle("CoverDesc", fontSize=11, textColor=SLATE,
@@ -319,7 +319,7 @@ def section_overview() -> list:
     items = []
     items += [h1("1. Overview"), rule()]
     items.append(body(
-        "OpenSecOps is the <i>Sigma for response actions</i> — an open-source, vendor-neutral "
+        "ThreatFlow is the <i>Sigma for response actions</i> — an open-source, vendor-neutral "
         "framework that lets security teams define response actions once and execute them across "
         "multiple security platforms without rewriting logic per tool."
     ))
@@ -331,19 +331,19 @@ def section_overview() -> list:
     ))
     items.append(sp())
 
-    items.append(h2("1.1 What OpenSecOps Is"))
+    items.append(h2("1.1 What ThreatFlow Is"))
     for b in [
         "<b>Action catalog</b> — YAML-defined, vendor-neutral response actions with rich metadata",
         "<b>Provider adapters</b> — thin translation layers to each platform's native API",
         "<b>Playbook engine</b> — ordered YAML workflows with template variables and conditional steps",
         "<b>MITRE integration</b> — every action mapped to D3FEND + ATT&amp;CK (offline, no live API)",
-        "<b>CLI</b> — <font face='Courier'>opensecops</font> command for operators and CI/CD pipelines",
+        "<b>CLI</b> — <font face='Courier'>threatflow</font> command for operators and CI/CD pipelines",
         "<b>Extensible</b> — new adapters and actions in &lt;50 lines each",
     ]:
         items.append(bullet(b))
     items.append(sp())
 
-    items.append(h2("1.2 What OpenSecOps Is Not"))
+    items.append(h2("1.2 What ThreatFlow Is Not"))
     for b in [
         "Not a full SOAR platform — no web UI, no event ingestion, no persistent queue",
         "Not an async distributed worker system",
@@ -371,7 +371,7 @@ def section_overview() -> list:
 def section_architecture() -> list:
     items = [h1("2. Architecture"), rule()]
     items.append(body(
-        "OpenSecOps follows a layered architecture. The <b>core</b> layer owns the domain models "
+        "ThreatFlow follows a layered architecture. The <b>core</b> layer owns the domain models "
         "and orchestration logic. The <b>adapter</b> layer provides pluggable provider integrations. "
         "The <b>playbook</b> layer runs multi-step workflows. The <b>CLI</b> layer exposes everything "
         "to operators."
@@ -380,7 +380,7 @@ def section_architecture() -> list:
 
     items.append(h2("2.1 Package Structure"))
     lines = [
-        "src/opensecops/",
+        "src/threatflow/",
         "  core/           Pydantic models, ActionRegistry, CatalogLoader, ActionExecutor",
         "  adapters/       BaseAdapter + crowdstrike, defender, splunk_soar",
         "  playbook/       Playbook models, validator, executor",
@@ -435,7 +435,7 @@ def section_architecture() -> list:
 def section_actions() -> list:
     items = [h1("3. Action Catalog"), rule()]
     items.append(body(
-        "Actions are the atomic units of OpenSecOps. Each action is defined in YAML and is "
+        "Actions are the atomic units of ThreatFlow. Each action is defined in YAML and is "
         "completely vendor-neutral — it describes <i>what</i> to do, not <i>how</i> a specific "
         "platform does it. Adapters handle the translation."
     ))
@@ -532,7 +532,7 @@ def section_actions() -> list:
 def section_adapters() -> list:
     items = [h1("4. Provider Adapters"), rule()]
     items.append(body(
-        "Provider adapters are the bridge between OpenSecOps abstract actions and the "
+        "Provider adapters are the bridge between ThreatFlow abstract actions and the "
         "native APIs of each security platform. All adapters extend <font face='Courier'>BaseAdapter</font> "
         "and implement six methods."
     ))
@@ -583,8 +583,8 @@ def section_adapters() -> list:
         "The minimum implementation:"
     ))
     impl_lines = [
-        "from opensecops.adapters.base import BaseAdapter, NativeActionMapping",
-        "from opensecops.core.models import Action, ExecutionResult, ProviderInfo",
+        "from threatflow.adapters.base import BaseAdapter, NativeActionMapping",
+        "from threatflow.core.models import Action, ExecutionResult, ProviderInfo",
         "",
         "class MyAdapter(BaseAdapter):",
         "    PROVIDER_ID = 'my_platform'",
@@ -702,7 +702,7 @@ def section_playbooks() -> list:
 def section_mitre() -> list:
     items = [h1("6. MITRE Integration"), rule()]
     items.append(body(
-        "OpenSecOps embeds both MITRE ATT&amp;CK and D3FEND technique data as bundled YAML files, "
+        "ThreatFlow embeds both MITRE ATT&amp;CK and D3FEND technique data as bundled YAML files, "
         "enabling offline operation and predictable behaviour in air-gapped environments. "
         "No runtime calls to the MITRE TAXII server are made."
     ))
@@ -730,14 +730,14 @@ def section_mitre() -> list:
     items.append(h2("6.2 ATT&CK Mappings"))
     items.append(body(
         "Each action also lists the ATT&amp;CK techniques it is designed to counter via "
-        "<font face='Courier'>attack_mappings</font>. The <font face='Courier'>opensecops plan</font> "
+        "<font face='Courier'>attack_mappings</font>. The <font face='Courier'>threatflow plan</font> "
         "command uses this cross-reference to suggest actions given a technique ID."
     ))
     items.append(sp())
 
     items.append(h2("6.3 Plan Command"))
-    items.append(body("Given a technique ID, OpenSecOps recommends relevant response actions:"))
-    for line in ["$ opensecops plan --attack-technique T1486", "", "ATT&CK Technique: T1486 — Data Encrypted for Impact", "D3FEND Countermeasures: D3-NI (Network Isolation)", "", "Recommended Actions:", "  isolate_host  endpoint  high  crowdstrike, defender, splunk_soar"]:
+    items.append(body("Given a technique ID, ThreatFlow recommends relevant response actions:"))
+    for line in ["$ threatflow plan --attack-technique T1486", "", "ATT&CK Technique: T1486 — Data Encrypted for Impact", "D3FEND Countermeasures: D3-NI (Network Isolation)", "", "Recommended Actions:", "  isolate_host  endpoint  high  crowdstrike, defender, splunk_soar"]:
         items.append(Paragraph(
             line.replace(" ", "&nbsp;").replace("<", "&lt;").replace(">", "&gt;"),
             S["Code"],
@@ -749,18 +749,18 @@ def section_mitre() -> list:
 def section_cli() -> list:
     items = [h1("7. CLI Reference"), rule()]
     items.append(body(
-        "The <font face='Courier'>opensecops</font> CLI is built with Typer and provides "
+        "The <font face='Courier'>threatflow</font> CLI is built with Typer and provides "
         "rich terminal output via Rich. All commands support <font face='Courier'>--help</font>."
     ))
     items.append(sp())
 
     commands = [
-        ("opensecops actions list", "[--domain D] [--provider P] [--tag T] [--risk R]", "List catalog actions with optional filters"),
-        ("opensecops actions show <id>", "", "Show full action detail: inputs, outputs, MITRE mappings"),
-        ("opensecops run <action_id>", "--provider P [--param k=v ...] [--inputs-file f.json] [--dry-run] [--force]", "Execute a single action; --dry-run simulates, --force bypasses soft approval"),
-        ("opensecops plan", "--attack-technique T1486 [--provider P]", "Suggest response actions for an ATT&CK technique"),
-        ("opensecops playbook validate <file>", "", "Validate a playbook YAML without executing anything"),
-        ("opensecops playbook run <file>", "--inputs f.json [--dry-run] [--force]", "Run a playbook; --dry-run simulates all steps"),
+        ("threatflow actions list", "[--domain D] [--provider P] [--tag T] [--risk R]", "List catalog actions with optional filters"),
+        ("threatflow actions show <id>", "", "Show full action detail: inputs, outputs, MITRE mappings"),
+        ("threatflow run <action_id>", "--provider P [--param k=v ...] [--inputs-file f.json] [--dry-run] [--force]", "Execute a single action; --dry-run simulates, --force bypasses soft approval"),
+        ("threatflow plan", "--attack-technique T1486 [--provider P]", "Suggest response actions for an ATT&CK technique"),
+        ("threatflow playbook validate <file>", "", "Validate a playbook YAML without executing anything"),
+        ("threatflow playbook run <file>", "--inputs f.json [--dry-run] [--force]", "Run a playbook; --dry-run simulates all steps"),
     ]
     data = [[Paragraph("Command", S["TableHeader"]), Paragraph("Key Options", S["TableHeader"]), Paragraph("Description", S["TableHeader"])]]
     for cmd, opts, desc in commands:
@@ -772,23 +772,23 @@ def section_cli() -> list:
     items.append(h2("7.1 Examples"))
     examples = [
         "# Browse the catalog",
-        "opensecops actions list --domain endpoint",
-        "opensecops actions show isolate_host",
+        "threatflow actions list --domain endpoint",
+        "threatflow actions show isolate_host",
         "",
         "# Dry-run a single action",
-        "opensecops run block_ip --provider crowdstrike \\",
+        "threatflow run block_ip --provider crowdstrike \\",
         "    --param ip_address=198.51.100.42 --dry-run",
         "",
         "# Execute with force (bypass soft approval)",
-        "opensecops run disable_user --provider defender \\",
+        "threatflow run disable_user --provider defender \\",
         "    --param user_upn=jdoe@corp.com --force",
         "",
         "# Plan a response",
-        "opensecops plan --attack-technique T1566 --provider defender",
+        "threatflow plan --attack-technique T1566 --provider defender",
         "",
         "# Validate and run a playbook",
-        "opensecops playbook validate playbooks/ransomware_response.yaml",
-        "opensecops playbook run playbooks/ransomware_response.yaml \\",
+        "threatflow playbook validate playbooks/ransomware_response.yaml",
+        "threatflow playbook run playbooks/ransomware_response.yaml \\",
         "    --inputs incident.json --dry-run",
     ]
     for line in examples:
@@ -801,8 +801,8 @@ def section_cli() -> list:
     items.append(h2("7.2 Environment Variables"))
     data = [
         [Paragraph("Variable", S["TableHeader"]), Paragraph("Default", S["TableHeader"]), Paragraph("Description", S["TableHeader"])],
-        [Paragraph("OPENSECOPS_CATALOG_DIR", S["TableCode"]), Paragraph("./catalog/actions", S["TableCode"]), Paragraph("Override the action catalog directory", S["TableCell"])],
-        [Paragraph("OPENSECOPS_MAPPINGS_DIR", S["TableCode"]), Paragraph("./catalog/mappings", S["TableCode"]), Paragraph("Override the MITRE mappings directory", S["TableCell"])],
+        [Paragraph("THREATFLOW_CATALOG_DIR", S["TableCode"]), Paragraph("./catalog/actions", S["TableCode"]), Paragraph("Override the action catalog directory", S["TableCell"])],
+        [Paragraph("THREATFLOW_MAPPINGS_DIR", S["TableCode"]), Paragraph("./catalog/mappings", S["TableCode"]), Paragraph("Override the MITRE mappings directory", S["TableCell"])],
     ]
     t = Table(data, colWidths=[5.5 * cm, 4 * cm, 7 * cm])
     t.setStyle(table_style())
@@ -820,12 +820,12 @@ def section_installation() -> list:
 
     items.append(h2("8.2 Install from Source"))
     for line in [
-        "git clone https://github.com/yunkewang/OpenSecOps",
-        "cd OpenSecOps",
+        "git clone https://github.com/yunkewang/ThreatFlow",
+        "cd ThreatFlow",
         "pip install -e '.[dev]'",
         "",
         "# Verify",
-        "opensecops --version",
+        "threatflow --version",
         "pytest  # 119 tests should pass",
     ]:
         items.append(Paragraph(
@@ -836,9 +836,9 @@ def section_installation() -> list:
 
     items.append(h2("8.3 Python API Quick Start"))
     for line in [
-        "from opensecops.core.loader import CatalogLoader",
-        "from opensecops.core.executor import ActionExecutor",
-        "from opensecops.adapters.crowdstrike import CrowdStrikeAdapter",
+        "from threatflow.core.loader import CatalogLoader",
+        "from threatflow.core.executor import ActionExecutor",
+        "from threatflow.adapters.crowdstrike import CrowdStrikeAdapter",
         "",
         "registry = CatalogLoader().load_default_catalog()",
         "executor = ActionExecutor(registry)",
@@ -863,7 +863,7 @@ def section_installation() -> list:
 def section_testing() -> list:
     items = [h1("9. Testing"), rule()]
     items.append(body(
-        "OpenSecOps ships with 119 unit tests covering all core components. "
+        "ThreatFlow ships with 119 unit tests covering all core components. "
         "Tests are written with pytest and use fixtures defined in <font face='Courier'>tests/conftest.py</font>."
     ))
     items.append(sp())
@@ -886,7 +886,7 @@ def section_testing() -> list:
     for line in [
         "pytest                                    # all tests",
         "pytest tests/test_adapters.py -v         # single file",
-        "pytest --cov=opensecops --cov-report=term-missing",
+        "pytest --cov=threatflow --cov-report=term-missing",
     ]:
         items.append(Paragraph(
             line.replace(" ", "&nbsp;").replace("<", "&lt;").replace(">", "&gt;"),
@@ -899,7 +899,7 @@ def section_testing() -> list:
 def section_contributing() -> list:
     items = [h1("10. Contributing"), rule()]
     items.append(body(
-        "OpenSecOps is designed to be contributor-friendly. The three most common "
+        "ThreatFlow is designed to be contributor-friendly. The three most common "
         "contribution types are adding catalog actions, writing provider adapters, "
         "and creating playbooks. See <font face='Courier'>CONTRIBUTING.md</font> for full details."
     ))
@@ -910,7 +910,7 @@ def section_contributing() -> list:
         "Verify the action is vendor-neutral (implementable by 2+ providers)",
         "Identify the relevant D3FEND and ATT&CK technique mappings",
         "Add a YAML entry to the appropriate domain file under catalog/actions/",
-        "Run opensecops actions list to verify it loads",
+        "Run threatflow actions list to verify it loads",
         "Add the action ID to any adapter that implements it",
     ]:
         items.append(bullet(b))
@@ -918,10 +918,10 @@ def section_contributing() -> list:
 
     items.append(h2("10.2 Writing a Provider Adapter"))
     for b in [
-        "Create src/opensecops/adapters/my_platform/__init__.py and adapter.py",
+        "Create src/threatflow/adapters/my_platform/__init__.py and adapter.py",
         "Subclass BaseAdapter and implement all 6 methods",
         "Start with mock implementations; add # TODO: real API call comments",
-        "Register in src/opensecops/cli/_registry.py",
+        "Register in src/threatflow/cli/_registry.py",
         "Write tests following tests/test_adapters.py patterns",
     ]:
         items.append(bullet(b))
@@ -948,7 +948,7 @@ def section_contributing() -> list:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def build_pdf(output_path: str) -> None:
-    doc = OpenSecOpsDoc(output_path)
+    doc = ThreatFlowDoc(output_path)
 
     story = []
     story += cover_page()
@@ -980,4 +980,4 @@ def build_pdf(output_path: str) -> None:
 if __name__ == "__main__":
     out_dir = Path(__file__).parent
     out_dir.mkdir(exist_ok=True)
-    build_pdf(str(out_dir / "OpenSecOps_Documentation.pdf"))
+    build_pdf(str(out_dir / "ThreatFlow_Documentation.pdf"))

@@ -32,7 +32,7 @@ inputs:
     type: string
     required: false
     description: Human-readable label for the snapshot.
-    default: "Forensic snapshot — OpenSecOps"
+    default: "Forensic snapshot — ThreatFlow"
 
   - name: include_memory
     type: boolean

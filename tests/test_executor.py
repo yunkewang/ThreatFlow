@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pytest
 
-from opensecops.core.executor import (
+from threatflow.core.executor import (
     ActionExecutor,
     ActionNotFound,
     ApprovalRequired,
     ProviderNotFound,
 )
-from opensecops.core.models import ApprovalMode, RiskLevel
-from opensecops.core.registry import ActionRegistry
+from threatflow.core.models import ApprovalMode, RiskLevel
+from threatflow.core.registry import ActionRegistry
 
 
 class TestActionExecutor:

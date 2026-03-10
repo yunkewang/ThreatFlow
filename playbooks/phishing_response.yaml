@@ -7,7 +7,7 @@ description: >
 
   Designed for T1566 (Phishing) scenarios.
 version: "1.0.0"
-author: "OpenSecOps Community"
+author: "ThreatFlow Community"
 severity: medium
 triggers:
   - T1566
@@ -125,5 +125,5 @@ steps:
         Domain blocked: {{ sender_domain }}
         Email purge submitted for: {{ recipient }}
         Analysts should verify with affected users and check for credential compromise.
-      author: "OpenSecOps"
+      author: "ThreatFlow"
     on_failure: continue

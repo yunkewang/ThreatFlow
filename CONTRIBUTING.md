@@ -1,6 +1,6 @@
-# Contributing to OpenSecOps
+# Contributing to ThreatFlow
 
-Thank you for contributing to OpenSecOps. This guide covers the three most common contribution types:
+Thank you for contributing to ThreatFlow. This guide covers the three most common contribution types:
 
 1. **Adding a catalog action** — new vendor-neutral response action
 2. **Writing a provider adapter** — connect a new security tool
@@ -11,8 +11,8 @@ Thank you for contributing to OpenSecOps. This guide covers the three most commo
 ## Project setup
 
 ```bash
-git clone https://github.com/opensecops/opensecops
-cd opensecops
+git clone https://github.com/threatflow/threatflow
+cd threatflow
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest  # verify everything passes
@@ -30,7 +30,7 @@ Before adding a new action, verify:
 - [ ] The action is **vendor-neutral** (can in principle be implemented by 2+ providers)
 - [ ] It maps to at least one **D3FEND** technique
 - [ ] It maps to at least one **ATT&CK** technique it counters
-- [ ] It does not duplicate an existing action (run `opensecops actions list`)
+- [ ] It does not duplicate an existing action (run `threatflow actions list`)
 
 ### Action YAML template
 
@@ -88,8 +88,8 @@ tags:
 
 ```bash
 # Validate that your action loads correctly
-opensecops actions list
-opensecops actions show your_action_id
+threatflow actions list
+threatflow actions show your_action_id
 
 # Run tests
 pytest tests/test_loader.py -v
@@ -101,10 +101,10 @@ pytest tests/test_loader.py -v
 
 ### File structure
 
-Create a new directory under `src/opensecops/adapters/`:
+Create a new directory under `src/threatflow/adapters/`:
 
 ```
-src/opensecops/adapters/
+src/threatflow/adapters/
 └── my_platform/
     ├── __init__.py          # exports MyPlatformAdapter
     └── adapter.py           # implementation
@@ -115,8 +115,8 @@ src/opensecops/adapters/
 Your adapter must subclass `BaseAdapter` and implement these methods:
 
 ```python
-from opensecops.adapters.base import BaseAdapter, NativeActionMapping
-from opensecops.core.models import Action, ExecutionResult, ProviderInfo
+from threatflow.adapters.base import BaseAdapter, NativeActionMapping
+from threatflow.core.models import Action, ExecutionResult, ProviderInfo
 
 class MyPlatformAdapter(BaseAdapter):
     PROVIDER_ID = "my_platform"   # kebab-case or snake_case, unique
@@ -150,10 +150,10 @@ class MyPlatformAdapter(BaseAdapter):
 
 ### Register in the CLI registry
 
-Add your adapter to `src/opensecops/cli/_registry.py`:
+Add your adapter to `src/threatflow/cli/_registry.py`:
 
 ```python
-from opensecops.adapters.my_platform import MyPlatformAdapter
+from threatflow.adapters.my_platform import MyPlatformAdapter
 
 executor.register_adapter(MyPlatformAdapter.PROVIDER_ID, MyPlatformAdapter())
 ```
@@ -217,13 +217,13 @@ steps:
 ### Validate your playbook
 
 ```bash
-opensecops playbook validate playbooks/my_playbook.yaml
+threatflow playbook validate playbooks/my_playbook.yaml
 ```
 
 ### Test with dry-run
 
 ```bash
-opensecops playbook run playbooks/my_playbook.yaml \
+threatflow playbook run playbooks/my_playbook.yaml \
     --inputs test_inputs.json \
     --dry-run
 ```

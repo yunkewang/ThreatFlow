@@ -89,7 +89,7 @@ actions:
         type: string
         required: false
         description: Reason for blocking (audit log).
-        default: "Blocked via OpenSecOps"
+        default: "Blocked via ThreatFlow"
     outputs:
       - name: sender
         type: string

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from opensecops.adapters.base import BaseAdapter, NativeActionMapping
-from opensecops.adapters.crowdstrike import CrowdStrikeAdapter
-from opensecops.adapters.defender import DefenderAdapter
-from opensecops.adapters.splunk_soar import SplunkSOARAdapter
-from opensecops.core.models import Action, RiskLevel
+from threatflow.adapters.base import BaseAdapter, NativeActionMapping
+from threatflow.adapters.crowdstrike import CrowdStrikeAdapter
+from threatflow.adapters.defender import DefenderAdapter
+from threatflow.adapters.splunk_soar import SplunkSOARAdapter
+from threatflow.core.models import Action, RiskLevel
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -191,7 +191,7 @@ class TestDefenderAdapter:
 
 class TestSplunkSOARAdapter:
     def test_create_case(self, splunk_soar_adapter: SplunkSOARAdapter) -> None:
-        from opensecops.core.models import Action, RiskLevel, ApprovalMode
+        from threatflow.core.models import Action, RiskLevel, ApprovalMode
         action = Action(
             id="create_case",
             name="Create Case",

@@ -7,7 +7,7 @@ description: >
 
   Designed for T1078 (Valid Accounts) and T1110 (Brute Force) scenarios.
 version: "1.0.0"
-author: "OpenSecOps Community"
+author: "ThreatFlow Community"
 severity: high
 triggers:
   - T1078
@@ -73,7 +73,7 @@ steps:
     inputs:
       case_id: "{{ create_case.case_id }}"
       note: "All sessions revoked for {{ user_upn }} at step completion. User will be forced to re-authenticate."
-      author: "OpenSecOps"
+      author: "ThreatFlow"
     on_failure: continue
 
   - id: disable_account
@@ -92,7 +92,7 @@ steps:
     inputs:
       case_id: "{{ create_case.case_id }}"
       note: "Account {{ user_upn }} disabled. Account enabled status: {{ disable_account.account_enabled }}."
-      author: "OpenSecOps"
+      author: "ThreatFlow"
     on_failure: continue
 
   - id: block_attacker_ip
@@ -143,5 +143,5 @@ steps:
         3. Review audit logs for data access during compromise window.
         4. Check for persistence mechanisms (mail forwarding rules, OAuth app grants).
         5. Re-enable account only after verification with user.
-      author: "OpenSecOps"
+      author: "ThreatFlow"
     on_failure: continue

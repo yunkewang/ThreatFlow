@@ -32,7 +32,7 @@ actions:
         type: string
         required: false
         description: Reason for block (audit log).
-        default: "Blocked via OpenSecOps"
+        default: "Blocked via ThreatFlow"
       - name: expiry_hours
         type: integer
         required: false
@@ -104,7 +104,7 @@ actions:
         type: string
         required: false
         description: Reason for unblocking (audit log).
-        default: "Unblocked via OpenSecOps"
+        default: "Unblocked via ThreatFlow"
     outputs:
       - name: ip_address
         type: string

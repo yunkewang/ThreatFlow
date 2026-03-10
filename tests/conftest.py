@@ -1,12 +1,12 @@
 """
-Shared pytest fixtures for OpenSecOps tests.
+Shared pytest fixtures for ThreatFlow tests.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from opensecops.core.models import (
+from threatflow.core.models import (
     Action,
     ActionInput,
     ActionOutput,
@@ -17,11 +17,11 @@ from opensecops.core.models import (
     InputType,
     RiskLevel,
 )
-from opensecops.core.registry import ActionRegistry
-from opensecops.core.executor import ActionExecutor
-from opensecops.adapters.crowdstrike import CrowdStrikeAdapter
-from opensecops.adapters.defender import DefenderAdapter
-from opensecops.adapters.splunk_soar import SplunkSOARAdapter
+from threatflow.core.registry import ActionRegistry
+from threatflow.core.executor import ActionExecutor
+from threatflow.adapters.crowdstrike import CrowdStrikeAdapter
+from threatflow.adapters.defender import DefenderAdapter
+from threatflow.adapters.splunk_soar import SplunkSOARAdapter
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -47,7 +47,7 @@ def isolate_host_action() -> Action:
                 type=InputType.STRING,
                 required=False,
                 description="Reason",
-                default="Isolated via OpenSecOps",
+                default="Isolated via ThreatFlow",
             ),
         ],
         outputs=[

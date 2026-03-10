@@ -23,7 +23,7 @@ actions:
         type: string
         required: false
         description: Reason for isolation (for audit log).
-        default: "Isolated via OpenSecOps"
+        default: "Isolated via ThreatFlow"
         example: "Suspected ransomware activity — T1486"
     outputs:
       - name: host_id
@@ -75,7 +75,7 @@ actions:
         type: string
         required: false
         description: Reason for releasing isolation.
-        default: "Released via OpenSecOps"
+        default: "Released via ThreatFlow"
     outputs:
       - name: host_id
         type: string
