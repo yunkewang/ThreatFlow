@@ -1,8 +1,8 @@
-# OpenSecOps
+# ThreatFlow
 
 **Vendor-neutral SOC response abstraction framework.**
 
-OpenSecOps is the *Sigma for response actions* — a standardised schema, action catalog, and adapter layer that lets security teams write response logic once and execute it across CrowdStrike Falcon, Microsoft Defender, Splunk SOAR, and custom tools.
+ThreatFlow is the *Sigma for response actions* — a standardised schema, action catalog, and adapter layer that lets security teams write response logic once and execute it across CrowdStrike Falcon, Microsoft Defender, Splunk SOAR, and custom tools.
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
