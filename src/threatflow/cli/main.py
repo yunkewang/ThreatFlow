@@ -12,7 +12,6 @@ Provides the ``threatflow`` command with sub-groups:
 
 from __future__ import annotations
 
-import json
 import logging
 import sys
 from typing import Optional
@@ -23,6 +22,7 @@ from rich.panel import Panel
 
 from threatflow import __version__
 from threatflow.cli.actions import actions_app
+from threatflow.cli.params import ParamParseError, parse_input_params
 from threatflow.cli.plan import plan_app
 from threatflow.cli.playbook import playbook_app
 
@@ -119,26 +119,11 @@ def run_action(
     from threatflow.core.executor import ActionNotFound, ApprovalRequired, ProviderNotFound
     from threatflow.core.models import ApprovalMode
 
-    input_params: dict[str, str] = {}
-
-    if inputs_file:
-        try:
-            with open(inputs_file) as f:
-                file_data = json.load(f)
-            if not isinstance(file_data, dict):
-                err_console.print("[red]--inputs-file must contain a JSON object[/red]")
-                raise typer.Exit(1)
-            input_params.update(file_data)
-        except (OSError, json.JSONDecodeError) as exc:
-            err_console.print(f"[red]Failed to read inputs file: {exc}[/red]")
-            raise typer.Exit(1)
-
-    for param in params:
-        if "=" not in param:
-            err_console.print(f"[red]Invalid --param format: '{param}'. Use key=value.[/red]")
-            raise typer.Exit(1)
-        key, _, value = param.partition("=")
-        input_params[key.strip()] = value.strip()
+    try:
+        input_params = parse_input_params(params=params, inputs_file=inputs_file)
+    except ParamParseError as exc:
+        err_console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(1)
 
     registry = get_registry()
     executor = get_executor()

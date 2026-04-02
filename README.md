@@ -120,6 +120,11 @@ threatflow run isolate_host --provider crowdstrike \
 threatflow run isolate_host --provider crowdstrike \
     --param host_id=abc1234567890abcdef1234567890ab
 
+# --param values accept JSON literals (booleans, numbers, arrays, objects)
+threatflow run append_note --provider splunk_soar \
+    --param case_id=12345 \
+    --param tags='["phishing","urgent"]'
+
 # Bypass soft approval (--force), useful in automated pipelines
 threatflow run block_ip --provider defender \
     --param ip_address=198.51.100.42 \
