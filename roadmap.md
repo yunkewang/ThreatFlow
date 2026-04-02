@@ -28,6 +28,24 @@ It is updated quarterly. Items are roughly ordered by priority within each miles
 - [x] Unit tests for all core components
 - [x] README, CONTRIBUTING, roadmap
 
+### v0.1.1 — Framework modernization (April 2026)
+
+- [x] **ATT&CK v18 mappings** — updated from v14 to v18 (Oct 2025 release)
+  - 38 techniques (up from 20), covering cloud, identity, and impact tactics
+  - Sub-technique granularity for key areas (T1078.004, T1098.001, T1136.003, T1562.001)
+- [x] **MITRE ATLAS integration** — adversarial AI/ML technique taxonomy
+  - 12 ATLAS techniques covering prompt injection, model poisoning, LLM jailbreak
+  - `ATLASMapping` model + `atlas.yaml` bundled mappings
+  - `MitreIndex.get_atlas()` and `all_atlas_ids()` query API
+- [x] **Cloud domain** — 4 new actions: `suspend_cloud_identity`, `revoke_cloud_credentials`, `restrict_storage_access`, `isolate_container`
+- [x] **AI security domain** — 4 new actions: `disable_ai_endpoint`, `revoke_ai_api_keys`, `block_prompt_source`, `quarantine_ml_model`
+- [x] **Expanded identity actions** — `enforce_mfa`, `revoke_app_consent`
+- [x] **Detection-as-Code integration** — `sigma_rule_refs` field links actions to Sigma rules
+- [x] **CTEM lifecycle tagging** — `ctem_stage` field maps actions to Gartner CTEM stages
+- [x] **New playbooks** — AI prompt injection response, cloud credential compromise
+- [x] 7 domains (up from 5): endpoint, identity, email, network, case, cloud, ai_security
+- [x] 25 actions (up from 15) across all domains
+
 ---
 
 ## v0.2 — Real API integration
@@ -64,27 +82,51 @@ It is updated quarterly. Items are roughly ordered by priority within each miles
 
 ---
 
-## v0.4 — Expanded catalog
+## v0.4 — Expanded catalog & cloud-native
 
-**Goal:** Broaden coverage of security domains.
+**Goal:** Broaden coverage to match 2025–2026 threat landscape.
 
-- [ ] **Cloud** domain: `suspend_aws_principal`, `revoke_azure_app_grant`, `disable_gcp_service_account`
+- [ ] **Cloud domain — real providers**: AWS (Boto3), Azure (azure-mgmt), GCP (google-cloud-iam)
+- [ ] **Kubernetes adapter**: native K8s API for pod isolation, RBAC, network policies
 - [ ] **Threat intel** domain: `submit_hash_to_sandbox`, `lookup_ioc`, `tag_ioc`
 - [ ] **Vulnerability** domain: `trigger_scan`, `create_exception`, `patch_asset`
-- [ ] ATT&CK sub-technique granularity in all existing mappings
+- [ ] **Exposure management** domain: `run_attack_path_analysis`, `validate_control_effectiveness`
 - [ ] D3FEND full-ontology import script (auto-generate from MITRE API)
+- [ ] ATLAS full-matrix import from atlas.mitre.org
 - [ ] STIX/TAXII export of the action catalog
 
 ---
 
-## v0.5 — Additional adapters
+## v0.5 — Agentic SOC & AI integration
+
+**Goal:** Support AI-assisted and AI-automated response workflows.
+
+This milestone addresses the dominant 2025–2026 industry trend toward agentic SOC
+platforms where AI systems autonomously handle detection, triage, investigation,
+and response.
+
+- [ ] **AI-assisted playbook generation** — given an ATT&CK/ATLAS technique, LLM
+      suggests a playbook with steps, providers, and variable bindings
+- [ ] **Natural language action invocation** — "isolate the compromised host" → action selection + param extraction
+- [ ] **Streaming detection integration** — consume events from Kafka/Confluent,
+      trigger playbooks from Sigma-in-stream matches (Confluent Sigma pattern)
+- [ ] **Decision-grade enrichment** — pre-execution enrichment step that assembles
+      context (threat intel, asset criticality, user risk score) into a narrative
+- [ ] **CTEM orchestration** — full 5-stage workflow: scope → discover → prioritize → validate → mobilize
+- [ ] **Human-in-the-loop for AI actions** — approval workflows specific to AI/ML model changes
+
+---
+
+## v0.6 — Additional adapters
 
 Community-contributed adapter targets (in rough priority order):
 
 - [ ] **Palo Alto Cortex XSOAR** — via Cortex XSOAR REST API
+- [ ] **Palo Alto Cortex XSIAM** — aligned with proactive defense trend
 - [ ] **SentinelOne** — via SentinelOne REST API
-- [ ] **Microsoft Sentinel** — as a first-class adapter (currently via Defender adapter)
+- [ ] **Microsoft Sentinel** — as a first-class adapter
 - [ ] **Elastic Security** — via Elastic Security REST API
+- [ ] **Wazuh** — open-source XDR integration (dominant OSS SIEM/XDR)
 - [ ] **Tines** — emit Tines stories from playbooks
 - [ ] **JIRA / ServiceNow** — case management adapters
 - [ ] **PagerDuty** — alert and case creation
@@ -118,6 +160,10 @@ These are ideas raised by the community that need more design work:
 - **Threat intel enrichment** — auto-enrich IOCs before blocking (VirusTotal, MISP)
 - **Multi-tenancy** — run ThreatFlow as a shared service with per-tenant provider configs
 - **gRPC API** — server mode for programmatic integration from other tools
+- **MITRE ATT&CK Evaluations alignment** — benchmark ThreatFlow coverage against annual eval results
+- **CTI-REALM integration** — leverage Microsoft's AI-agent detection rule generation benchmark
+- **Shadow AI discovery** — detect and inventory unmanaged AI tools/models in the environment
+- **Post-quantum credential rotation** — support for quantum-safe key rotation workflows
 
 ---
 

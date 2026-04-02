@@ -1,155 +1,70 @@
-# MITRE ATT&CK technique catalog (subset)
+# MITRE ATT&CK technique catalog (curated subset)
 # Source: https://attack.mitre.org/
-# Version: ATT&CK v14
-# Note: This is a curated subset covering techniques most frequently seen in SOC response.
+# Version: ATT&CK v18 (October 2025)
+# Note: Curated subset covering techniques most frequently seen in SOC response,
+#       updated with v18 Detection Strategies, cloud, identity, and AI-related techniques.
 
 techniques:
 
-  T1021:
-    id: T1021
-    name: Remote Services
-    tactic: Lateral Movement
-    description: >
-      Adversaries may use valid accounts to log into a service specifically
-      designed to accept remote connections, such as SSH, RDP, or VNC, to
-      move laterally across the network.
-    url: https://attack.mitre.org/techniques/T1021/
+  # ── Reconnaissance ──────────────────────────────────────────────
 
-  T1041:
-    id: T1041
-    name: Exfiltration Over C2 Channel
-    tactic: Exfiltration
+  T1595:
+    id: T1595
+    name: Active Scanning
+    tactic: Reconnaissance
     description: >
-      Adversaries may steal data by exfiltrating it over an existing command
-      and control channel.
-    url: https://attack.mitre.org/techniques/T1041/
+      Adversaries may execute active reconnaissance scans to gather information
+      that can be used during targeting (port scanning, vulnerability scanning).
+    url: https://attack.mitre.org/techniques/T1595/
 
-  T1048:
-    id: T1048
-    name: Exfiltration Over Alternative Protocol
-    tactic: Exfiltration
+  T1598:
+    id: T1598
+    name: Phishing for Information
+    tactic: Reconnaissance
     description: >
-      Adversaries may steal data by exfiltrating it over a different protocol
-      than that used for command and control.
-    url: https://attack.mitre.org/techniques/T1048/
+      Adversaries may send phishing messages to elicit sensitive information that
+      can be used during targeting.
+    url: https://attack.mitre.org/techniques/T1598/
 
-  T1055:
-    id: T1055
-    name: Process Injection
-    tactic: Defense Evasion
-    description: >
-      Adversaries may inject code into processes to evade process-based defences
-      and potentially elevate privileges.
-    url: https://attack.mitre.org/techniques/T1055/
+  # ── Resource Development ────────────────────────────────────────
 
-  T1059:
-    id: T1059
-    name: Command and Scripting Interpreter
-    tactic: Execution
+  T1583.001:
+    id: T1583.001
+    name: "Acquire Infrastructure: Domains"
+    tactic: Resource Development
     description: >
-      Adversaries may abuse command and script interpreters to execute commands,
-      scripts, or binaries.
-    url: https://attack.mitre.org/techniques/T1059/
+      Adversaries may acquire domains that can be used during targeting.
+    url: https://attack.mitre.org/techniques/T1583/001/
 
-  T1059.001:
-    id: T1059.001
-    name: PowerShell
-    tactic: Execution
-    description: >
-      Adversaries may abuse PowerShell commands and scripts for execution.
-    url: https://attack.mitre.org/techniques/T1059/001/
-
-  T1071:
-    id: T1071
-    name: Application Layer Protocol
-    tactic: Command and Control
-    description: >
-      Adversaries may communicate using OSI application layer protocols to avoid
-      detection/network filtering by blending in with existing traffic.
-    url: https://attack.mitre.org/techniques/T1071/
+  # ── Initial Access ──────────────────────────────────────────────
 
   T1078:
     id: T1078
     name: Valid Accounts
-    tactic: Defense Evasion
+    tactic: Initial Access
     description: >
       Adversaries may obtain and abuse credentials of existing accounts as a
       means of gaining initial access, persistence, privilege escalation, or
       defense evasion.
     url: https://attack.mitre.org/techniques/T1078/
 
-  T1098:
-    id: T1098
-    name: Account Manipulation
-    tactic: Persistence
+  T1078.004:
+    id: T1078.004
+    name: "Valid Accounts: Cloud Accounts"
+    tactic: Initial Access
     description: >
-      Adversaries may manipulate accounts to maintain access to victim systems.
-    url: https://attack.mitre.org/techniques/T1098/
+      Adversaries may obtain and abuse credentials of cloud accounts to gain
+      initial access, persistence, or privilege escalation.
+    url: https://attack.mitre.org/techniques/T1078/004/
 
-  T1110:
-    id: T1110
-    name: Brute Force
-    tactic: Credential Access
+  T1190:
+    id: T1190
+    name: Exploit Public-Facing Application
+    tactic: Initial Access
     description: >
-      Adversaries may use brute force techniques to gain access to accounts
-      when passwords are unknown or when password hashes are obtained.
-    url: https://attack.mitre.org/techniques/T1110/
-
-  T1204:
-    id: T1204
-    name: User Execution
-    tactic: Execution
-    description: >
-      An adversary may rely upon specific actions by a user in order to gain
-      execution.
-    url: https://attack.mitre.org/techniques/T1204/
-
-  T1210:
-    id: T1210
-    name: Exploitation of Remote Services
-    tactic: Lateral Movement
-    description: >
-      Adversaries may exploit remote services to gain unauthorized access to
-      internal systems once inside a network.
-    url: https://attack.mitre.org/techniques/T1210/
-
-  T1219:
-    id: T1219
-    name: Remote Access Software
-    tactic: Command and Control
-    description: >
-      An adversary may use legitimate desktop support and remote access software
-      as a means of command and control.
-    url: https://attack.mitre.org/techniques/T1219/
-
-  T1486:
-    id: T1486
-    name: Data Encrypted for Impact
-    tactic: Impact
-    description: >
-      Adversaries may encrypt data on target systems or on large numbers of
-      systems in a network to interrupt availability to system and network
-      resources (ransomware).
-    url: https://attack.mitre.org/techniques/T1486/
-
-  T1550:
-    id: T1550
-    name: Use Alternate Authentication Material
-    tactic: Lateral Movement
-    description: >
-      Adversaries may use alternate authentication material, such as password
-      hashes, Kerberos tickets, and application access tokens, in order to move
-      laterally within an environment.
-    url: https://attack.mitre.org/techniques/T1550/
-
-  T1556:
-    id: T1556
-    name: Modify Authentication Process
-    tactic: Credential Access
-    description: >
-      Adversaries may modify authentication mechanisms and processes to access
-      user credentials or enable otherwise unwarranted access to accounts.
-    url: https://attack.mitre.org/techniques/T1556/
+      Adversaries may attempt to exploit a weakness in an Internet-facing host
+      or program using software, data, or commands.
+    url: https://attack.mitre.org/techniques/T1190/
 
   T1566:
     id: T1566
@@ -177,19 +92,294 @@ techniques:
       attempt to gain access to victim systems.
     url: https://attack.mitre.org/techniques/T1566/002/
 
-  T1583.001:
-    id: T1583.001
-    name: "Acquire Infrastructure: Domains"
-    tactic: Resource Development
-    description: >
-      Adversaries may acquire domains that can be used during targeting.
-    url: https://attack.mitre.org/techniques/T1583/001/
+  # ── Execution ───────────────────────────────────────────────────
 
-  T1598:
-    id: T1598
-    name: Phishing for Information
-    tactic: Reconnaissance
+  T1059:
+    id: T1059
+    name: Command and Scripting Interpreter
+    tactic: Execution
     description: >
-      Adversaries may send phishing messages to elicit sensitive information that
-      can be used during targeting.
-    url: https://attack.mitre.org/techniques/T1598/
+      Adversaries may abuse command and script interpreters to execute commands,
+      scripts, or binaries.
+    url: https://attack.mitre.org/techniques/T1059/
+
+  T1059.001:
+    id: T1059.001
+    name: PowerShell
+    tactic: Execution
+    description: >
+      Adversaries may abuse PowerShell commands and scripts for execution.
+    url: https://attack.mitre.org/techniques/T1059/001/
+
+  T1204:
+    id: T1204
+    name: User Execution
+    tactic: Execution
+    description: >
+      An adversary may rely upon specific actions by a user in order to gain
+      execution.
+    url: https://attack.mitre.org/techniques/T1204/
+
+  # ── Persistence ─────────────────────────────────────────────────
+
+  T1098:
+    id: T1098
+    name: Account Manipulation
+    tactic: Persistence
+    description: >
+      Adversaries may manipulate accounts to maintain access to victim systems.
+    url: https://attack.mitre.org/techniques/T1098/
+
+  T1098.001:
+    id: T1098.001
+    name: "Account Manipulation: Additional Cloud Credentials"
+    tactic: Persistence
+    description: >
+      Adversaries may add adversary-controlled credentials to cloud accounts
+      to maintain persistent access.
+    url: https://attack.mitre.org/techniques/T1098/001/
+
+  T1136:
+    id: T1136
+    name: Create Account
+    tactic: Persistence
+    description: >
+      Adversaries may create accounts to maintain access to victim systems.
+    url: https://attack.mitre.org/techniques/T1136/
+
+  T1136.003:
+    id: T1136.003
+    name: "Create Account: Cloud Account"
+    tactic: Persistence
+    description: >
+      Adversaries may create cloud accounts to maintain persistent access.
+    url: https://attack.mitre.org/techniques/T1136/003/
+
+  # ── Privilege Escalation ────────────────────────────────────────
+
+  T1055:
+    id: T1055
+    name: Process Injection
+    tactic: Privilege Escalation
+    description: >
+      Adversaries may inject code into processes to evade process-based defences
+      and potentially elevate privileges.
+    url: https://attack.mitre.org/techniques/T1055/
+
+  T1548:
+    id: T1548
+    name: Abuse Elevation Control Mechanism
+    tactic: Privilege Escalation
+    description: >
+      Adversaries may circumvent mechanisms designed to control elevated privileges
+      to gain higher-level permissions.
+    url: https://attack.mitre.org/techniques/T1548/
+
+  # ── Defense Evasion ─────────────────────────────────────────────
+
+  T1070:
+    id: T1070
+    name: Indicator Removal
+    tactic: Defense Evasion
+    description: >
+      Adversaries may delete or modify artifacts generated within systems to
+      remove evidence of their presence or hinder defenses.
+    url: https://attack.mitre.org/techniques/T1070/
+
+  T1562:
+    id: T1562
+    name: Impair Defenses
+    tactic: Defense Evasion
+    description: >
+      Adversaries may maliciously modify components of a victim environment in
+      order to hinder or disable defensive mechanisms.
+    url: https://attack.mitre.org/techniques/T1562/
+
+  T1562.001:
+    id: T1562.001
+    name: "Impair Defenses: Disable or Modify Tools"
+    tactic: Defense Evasion
+    description: >
+      Adversaries may disable security tools to avoid detection of their tools
+      and activities.
+    url: https://attack.mitre.org/techniques/T1562/001/
+
+  # ── Credential Access ───────────────────────────────────────────
+
+  T1110:
+    id: T1110
+    name: Brute Force
+    tactic: Credential Access
+    description: >
+      Adversaries may use brute force techniques to gain access to accounts
+      when passwords are unknown or when password hashes are obtained.
+    url: https://attack.mitre.org/techniques/T1110/
+
+  T1556:
+    id: T1556
+    name: Modify Authentication Process
+    tactic: Credential Access
+    description: >
+      Adversaries may modify authentication mechanisms and processes to access
+      user credentials or enable otherwise unwarranted access to accounts.
+    url: https://attack.mitre.org/techniques/T1556/
+
+  T1528:
+    id: T1528
+    name: Steal Application Access Token
+    tactic: Credential Access
+    description: >
+      Adversaries may steal application access tokens as a means of acquiring
+      credentials to access remote systems and resources.
+    url: https://attack.mitre.org/techniques/T1528/
+
+  T1621:
+    id: T1621
+    name: Multi-Factor Authentication Request Generation
+    tactic: Credential Access
+    description: >
+      Adversaries may attempt to bypass MFA by generating excessive push
+      notifications or authentication requests (MFA fatigue/bombing).
+    url: https://attack.mitre.org/techniques/T1621/
+
+  # ── Discovery ───────────────────────────────────────────────────
+
+  T1526:
+    id: T1526
+    name: Cloud Service Discovery
+    tactic: Discovery
+    description: >
+      Adversaries may attempt to enumerate cloud services running on a system
+      to discover services for potential exploitation.
+    url: https://attack.mitre.org/techniques/T1526/
+
+  # ── Lateral Movement ────────────────────────────────────────────
+
+  T1021:
+    id: T1021
+    name: Remote Services
+    tactic: Lateral Movement
+    description: >
+      Adversaries may use valid accounts to log into a service specifically
+      designed to accept remote connections, such as SSH, RDP, or VNC, to
+      move laterally across the network.
+    url: https://attack.mitre.org/techniques/T1021/
+
+  T1210:
+    id: T1210
+    name: Exploitation of Remote Services
+    tactic: Lateral Movement
+    description: >
+      Adversaries may exploit remote services to gain unauthorized access to
+      internal systems once inside a network.
+    url: https://attack.mitre.org/techniques/T1210/
+
+  T1550:
+    id: T1550
+    name: Use Alternate Authentication Material
+    tactic: Lateral Movement
+    description: >
+      Adversaries may use alternate authentication material, such as password
+      hashes, Kerberos tickets, and application access tokens, in order to move
+      laterally within an environment.
+    url: https://attack.mitre.org/techniques/T1550/
+
+  # ── Collection ──────────────────────────────────────────────────
+
+  T1530:
+    id: T1530
+    name: Data from Cloud Storage
+    tactic: Collection
+    description: >
+      Adversaries may access data from improperly secured cloud storage
+      (S3 buckets, Azure blobs, GCP buckets).
+    url: https://attack.mitre.org/techniques/T1530/
+
+  # ── Command and Control ─────────────────────────────────────────
+
+  T1071:
+    id: T1071
+    name: Application Layer Protocol
+    tactic: Command and Control
+    description: >
+      Adversaries may communicate using OSI application layer protocols to avoid
+      detection/network filtering by blending in with existing traffic.
+    url: https://attack.mitre.org/techniques/T1071/
+
+  T1219:
+    id: T1219
+    name: Remote Access Software
+    tactic: Command and Control
+    description: >
+      An adversary may use legitimate desktop support and remote access software
+      as a means of command and control.
+    url: https://attack.mitre.org/techniques/T1219/
+
+  # ── Exfiltration ────────────────────────────────────────────────
+
+  T1041:
+    id: T1041
+    name: Exfiltration Over C2 Channel
+    tactic: Exfiltration
+    description: >
+      Adversaries may steal data by exfiltrating it over an existing command
+      and control channel.
+    url: https://attack.mitre.org/techniques/T1041/
+
+  T1048:
+    id: T1048
+    name: Exfiltration Over Alternative Protocol
+    tactic: Exfiltration
+    description: >
+      Adversaries may steal data by exfiltrating it over a different protocol
+      than that used for command and control.
+    url: https://attack.mitre.org/techniques/T1048/
+
+  T1567:
+    id: T1567
+    name: Exfiltration Over Web Service
+    tactic: Exfiltration
+    description: >
+      Adversaries may use existing, legitimate external web services to
+      exfiltrate data from a network (cloud storage, pastebins).
+    url: https://attack.mitre.org/techniques/T1567/
+
+  # ── Impact ──────────────────────────────────────────────────────
+
+  T1486:
+    id: T1486
+    name: Data Encrypted for Impact
+    tactic: Impact
+    description: >
+      Adversaries may encrypt data on target systems or on large numbers of
+      systems in a network to interrupt availability to system and network
+      resources (ransomware).
+    url: https://attack.mitre.org/techniques/T1486/
+
+  T1490:
+    id: T1490
+    name: Inhibit System Recovery
+    tactic: Impact
+    description: >
+      Adversaries may delete or remove built-in OS data and turn off services
+      designed to aid in the recovery of a corrupted system (shadow copies,
+      backups).
+    url: https://attack.mitre.org/techniques/T1490/
+
+  T1498:
+    id: T1498
+    name: Network Denial of Service
+    tactic: Impact
+    description: >
+      Adversaries may perform network denial of service attacks to degrade or
+      block the availability of targeted resources.
+    url: https://attack.mitre.org/techniques/T1498/
+
+  T1531:
+    id: T1531
+    name: Account Access Removal
+    tactic: Impact
+    description: >
+      Adversaries may interrupt the availability of system and network resources
+      by inhibiting access to accounts utilized by legitimate users.
+    url: https://attack.mitre.org/techniques/T1531/

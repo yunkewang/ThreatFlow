@@ -1,13 +1,19 @@
 """
-MITRE ATT&CK and D3FEND index helpers.
+MITRE ATT&CK, D3FEND, and ATLAS index helpers.
 
 This module provides utilities for querying the embedded MITRE mapping YAML
 files that ship with ThreatFlow. It intentionally avoids live API calls to
 the MITRE TAXII server — the bundled data is sufficient for the ``plan``
 command and offline environments.
 
-To update the bundled data, regenerate ``catalog/mappings/d3fend.yaml`` and
-``catalog/mappings/attack.yaml`` from the authoritative MITRE sources.
+Supports:
+- **ATT&CK v18** — adversary techniques across Enterprise, Mobile, and ICS.
+- **D3FEND** — defensive countermeasure techniques mapped to ATT&CK.
+- **ATLAS** — adversarial techniques targeting AI/ML systems.
+
+To update the bundled data, regenerate ``catalog/mappings/d3fend.yaml``,
+``catalog/mappings/attack.yaml``, and ``catalog/mappings/atlas.yaml``
+from the authoritative MITRE sources.
 """
 
 from __future__ import annotations
@@ -24,26 +30,30 @@ logger = logging.getLogger(__name__)
 
 class MitreIndex:
     """
-    In-memory index of MITRE ATT&CK techniques and D3FEND countermeasures.
+    In-memory index of MITRE ATT&CK techniques, D3FEND countermeasures,
+    and ATLAS AI/ML adversarial techniques.
 
     Loaded from the bundled YAML mapping files. Used by the ``plan`` command
-    to suggest response actions given an ATT&CK technique ID.
+    to suggest response actions given an ATT&CK or ATLAS technique ID.
 
     Usage::
 
         index = MitreIndex.load()
         actions = index.d3fend_for_attack("T1059")
+        atlas  = index.get_atlas("AML.T0048")
     """
 
     def __init__(
         self,
         attack_techniques: dict[str, Any],
         d3fend_techniques: dict[str, Any],
+        atlas_techniques: dict[str, Any],
         attack_to_d3fend: dict[str, list[str]],
         d3fend_to_attack: dict[str, list[str]],
     ) -> None:
         self._attack = attack_techniques
         self._d3fend = d3fend_techniques
+        self._atlas = atlas_techniques
         self._attack_to_d3fend = attack_to_d3fend
         self._d3fend_to_attack = d3fend_to_attack
 
@@ -56,8 +66,9 @@ class MitreIndex:
         """Load the MITRE index from YAML mapping files.
 
         Args:
-            mappings_dir: Directory containing ``attack.yaml`` and
-                ``d3fend.yaml``. Defaults to the bundled catalog.
+            mappings_dir: Directory containing ``attack.yaml``,
+                ``d3fend.yaml``, and optionally ``atlas.yaml``.
+                Defaults to the bundled catalog.
 
         Returns:
             Populated :class:`MitreIndex`.
@@ -66,9 +77,11 @@ class MitreIndex:
 
         attack_path = mappings_dir / "attack.yaml"
         d3fend_path = mappings_dir / "d3fend.yaml"
+        atlas_path = mappings_dir / "atlas.yaml"
 
         attack_data: dict[str, Any] = {}
         d3fend_data: dict[str, Any] = {}
+        atlas_data: dict[str, Any] = {}
 
         if attack_path.exists():
             try:
@@ -81,6 +94,12 @@ class MitreIndex:
                 d3fend_data = yaml.safe_load(d3fend_path.read_text()) or {}
             except yaml.YAMLError as exc:
                 logger.warning("Failed to load D3FEND mappings: %s", exc)
+
+        if atlas_path.exists():
+            try:
+                atlas_data = yaml.safe_load(atlas_path.read_text()) or {}
+            except yaml.YAMLError as exc:
+                logger.warning("Failed to load ATLAS mappings: %s", exc)
 
         # Build cross-reference indexes
         attack_to_d3fend: dict[str, list[str]] = {}
@@ -95,6 +114,7 @@ class MitreIndex:
         return cls(
             attack_techniques=attack_data.get("techniques", {}),
             d3fend_techniques=d3fend_data.get("techniques", {}),
+            atlas_techniques=atlas_data.get("techniques", {}),
             attack_to_d3fend=attack_to_d3fend,
             d3fend_to_attack=d3fend_to_attack,
         )
@@ -140,6 +160,15 @@ class MitreIndex:
     def all_d3fend_ids(self) -> list[str]:
         """Return sorted list of all D3FEND technique IDs in the index."""
         return sorted(self._d3fend.keys())
+
+    def get_atlas(self, technique_id: str) -> dict[str, Any] | None:
+        """Return ATLAS technique details by ID."""
+        technique_id = technique_id.upper()
+        return self._atlas.get(technique_id)
+
+    def all_atlas_ids(self) -> list[str]:
+        """Return sorted list of all ATLAS technique IDs in the index."""
+        return sorted(self._atlas.keys())
 
     # ──────────────────────────────────────────
     # Helpers

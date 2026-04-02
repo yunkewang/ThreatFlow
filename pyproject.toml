@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Vendor-neutral SOC response abstraction framework"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 authors = [
     { name = "ThreatFlow Contributors" },
 ]

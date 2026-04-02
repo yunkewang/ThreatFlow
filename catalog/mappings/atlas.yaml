@@ -1,0 +1,124 @@
+# MITRE ATLAS (Adversarial Threat Landscape for AI Systems)
+# Source: https://atlas.mitre.org/
+# Version: ATLAS v4 (2025)
+# Note: ATLAS maps adversarial techniques targeting AI/ML systems.
+#       This is a curated subset covering the most actionable techniques
+#       for SOC teams defending AI-integrated environments.
+
+techniques:
+
+  AML.T0000:
+    id: AML.T0000
+    name: ML Model Access
+    tactic: Reconnaissance
+    description: >
+      Adversaries gain some level of access to an ML model, either through
+      direct API access, model files, or inference endpoints, enabling
+      further attack stages.
+    url: https://atlas.mitre.org/techniques/AML.T0000
+
+  AML.T0015:
+    id: AML.T0015
+    name: Evade ML Model
+    tactic: ML Attack Staging
+    description: >
+      Adversaries craft inputs that cause an ML model to produce incorrect
+      outputs while appearing normal to human observers. Used to bypass
+      AI-powered security controls.
+    url: https://atlas.mitre.org/techniques/AML.T0015
+
+  AML.T0016:
+    id: AML.T0016
+    name: Obtain Capabilities
+    tactic: Resource Development
+    description: >
+      Adversaries obtain tools, models, or infrastructure used to mount
+      attacks on ML systems, including open-source attack frameworks.
+    url: https://atlas.mitre.org/techniques/AML.T0016
+
+  AML.T0017:
+    id: AML.T0017
+    name: Develop Capabilities
+    tactic: Resource Development
+    description: >
+      Adversaries develop custom tools or models specifically designed to
+      attack target ML systems, including adversarial example generators.
+    url: https://atlas.mitre.org/techniques/AML.T0017
+
+  AML.T0025:
+    id: AML.T0025
+    name: Exfiltration via ML Inference API
+    tactic: Exfiltration
+    description: >
+      Adversaries use inference API queries to extract training data,
+      model parameters, or sensitive information from ML systems (model
+      inversion, membership inference).
+    url: https://atlas.mitre.org/techniques/AML.T0025
+
+  AML.T0029:
+    id: AML.T0029
+    name: Denial of ML Service
+    tactic: Impact
+    description: >
+      Adversaries degrade or deny ML service availability through resource
+      exhaustion, adversarial inputs causing crashes, or model corruption.
+    url: https://atlas.mitre.org/techniques/AML.T0029
+
+  AML.T0031:
+    id: AML.T0031
+    name: Erode ML Model Integrity
+    tactic: Impact
+    description: >
+      Adversaries corrupt model outputs over time through data poisoning,
+      concept drift injection, or training pipeline manipulation, degrading
+      model reliability without triggering obvious failures.
+    url: https://atlas.mitre.org/techniques/AML.T0031
+
+  AML.T0040:
+    id: AML.T0040
+    name: ML Supply Chain Compromise
+    tactic: Initial Access
+    description: >
+      Adversaries compromise components of the ML supply chain (pre-trained
+      models, training datasets, model registries, ML frameworks) to inject
+      backdoors or malicious behavior.
+    url: https://atlas.mitre.org/techniques/AML.T0040
+
+  AML.T0043:
+    id: AML.T0043
+    name: Craft Adversarial Data
+    tactic: ML Attack Staging
+    description: >
+      Adversaries create data designed to exploit ML model weaknesses.
+      Includes adversarial examples, poisoned training data, and prompt
+      injection payloads for LLM-based systems.
+    url: https://atlas.mitre.org/techniques/AML.T0043
+
+  AML.T0048:
+    id: AML.T0048
+    name: Prompt Injection
+    tactic: Initial Access
+    description: >
+      Adversaries inject malicious instructions into LLM prompts to override
+      system instructions, exfiltrate data, or trigger unauthorized actions
+      by AI agents (direct and indirect prompt injection).
+    url: https://atlas.mitre.org/techniques/AML.T0048
+
+  AML.T0051:
+    id: AML.T0051
+    name: LLM Data Leakage
+    tactic: Collection
+    description: >
+      Adversaries craft prompts to extract sensitive information from LLM
+      training data, RAG knowledge bases, or system prompts through
+      carefully designed conversational techniques.
+    url: https://atlas.mitre.org/techniques/AML.T0051
+
+  AML.T0054:
+    id: AML.T0054
+    name: LLM Jailbreak
+    tactic: Defense Evasion
+    description: >
+      Adversaries use techniques to bypass LLM safety guardrails and content
+      filtering to generate harmful, restricted, or unauthorized outputs.
+    url: https://atlas.mitre.org/techniques/AML.T0054
