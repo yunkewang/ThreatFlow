@@ -48,6 +48,10 @@ actions:
       - identity
       - account
       - access-control
+    sigma_rule_refs:
+      - "azure_ad_suspicious_signin"
+      - "win_security_account_brute_force"
+    ctem_stage: mobilization
 
   - id: revoke_session
     name: Revoke User Sessions
@@ -140,3 +144,121 @@ actions:
       - identity
       - credential
       - account
+
+  - id: enforce_mfa
+    name: Enforce Multi-Factor Authentication
+    domain: identity
+    description: >
+      Require multi-factor authentication for a user or group by applying
+      a conditional access policy or MFA registration mandate. Counters
+      credential theft, MFA fatigue attacks, and token replay.
+    risk_level: medium
+    approval_mode: none
+    supported_providers:
+      - defender
+    inputs:
+      - name: user_upn
+        type: string
+        required: false
+        description: Target user UPN. If blank, applies to the specified group.
+        example: "jdoe@corp.com"
+      - name: group_id
+        type: string
+        required: false
+        description: Target group ID for bulk MFA enforcement.
+      - name: policy_type
+        type: string
+        required: false
+        default: per_user
+        enum:
+          - per_user
+          - conditional_access
+          - security_defaults
+        description: Type of MFA enforcement mechanism.
+    outputs:
+      - name: target
+        type: string
+        description: User UPN or group ID affected.
+      - name: mfa_enforced
+        type: boolean
+        description: Whether MFA enforcement was applied.
+      - name: policy_id
+        type: string
+        description: Policy identifier created or modified.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-MFA
+        technique_name: Multi-factor Authentication
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1621
+        technique_name: Multi-Factor Authentication Request Generation
+        tactic: Credential Access
+      - technique_id: T1078
+        technique_name: Valid Accounts
+        tactic: Initial Access
+      - technique_id: T1110
+        technique_name: Brute Force
+        tactic: Credential Access
+    tags:
+      - identity
+      - mfa
+      - hardening
+      - access-control
+
+  - id: revoke_app_consent
+    name: Revoke Application Consent
+    domain: identity
+    description: >
+      Revoke OAuth consent grants for a suspicious or compromised application
+      registration. Prevents the app from accessing user data and APIs via
+      previously granted permissions.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: app_id
+        type: string
+        required: true
+        description: Application (client) ID to revoke consent for.
+        example: "12345678-abcd-efgh-ijkl-123456789012"
+      - name: user_upn
+        type: string
+        required: false
+        description: Specific user whose consent to revoke. If blank, revokes tenant-wide.
+      - name: reason
+        type: string
+        required: false
+        default: "Revoked due to suspicious application activity"
+    outputs:
+      - name: app_id
+        type: string
+        description: Application whose consent was revoked.
+      - name: grants_revoked
+        type: integer
+        description: Number of consent grants revoked.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-UAP
+        technique_name: User Account Permissions
+        tactic: Harden
+      - technique_id: D3-ACL
+        technique_name: Access Control List
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1528
+        technique_name: Steal Application Access Token
+        tactic: Credential Access
+      - technique_id: T1098
+        technique_name: Account Manipulation
+        tactic: Persistence
+    tags:
+      - identity
+      - oauth
+      - application
+      - containment

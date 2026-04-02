@@ -110,6 +110,21 @@ class ATTACKMapping(BaseModel):
         return v.upper()
 
 
+class ATLASMapping(BaseModel):
+    """Maps the adversary technique from MITRE ATLAS (AI/ML attacks) this action counters."""
+
+    technique_id: str = Field(..., description="ATLAS technique ID (e.g. AML.T0048)")
+    technique_name: str = Field(..., description="ATLAS technique name")
+    url: str = Field("", description="Reference URL")
+
+    @field_validator("technique_id")
+    @classmethod
+    def validate_atlas_id(cls, v: str) -> str:
+        if not v.upper().startswith("AML."):
+            raise ValueError(f"ATLAS technique ID must start with 'AML.', got '{v}'")
+        return v.upper()
+
+
 class Action(BaseModel):
     """
     A vendor-neutral security response action definition.
@@ -138,6 +153,15 @@ class Action(BaseModel):
     )
     d3fend_mappings: list[D3FENDMapping] = Field(default_factory=list)
     attack_mappings: list[ATTACKMapping] = Field(default_factory=list)
+    atlas_mappings: list[ATLASMapping] = Field(default_factory=list)
+    sigma_rule_refs: list[str] = Field(
+        default_factory=list,
+        description="Sigma rule IDs from SigmaHQ that trigger this response action",
+    )
+    ctem_stage: str | None = Field(
+        None,
+        description="CTEM lifecycle stage this action supports: scoping, discovery, prioritization, validation, mobilization",
+    )
     tags: list[str] = Field(default_factory=list)
     version: str = Field("1.0.0", description="Action schema version")
 
@@ -279,4 +303,4 @@ class ProviderInfo(BaseModel):
 # Type aliases
 # ──────────────────────────────────────────────
 
-Domain = Literal["endpoint", "identity", "email", "network", "case"]
+Domain = Literal["endpoint", "identity", "email", "network", "case", "cloud", "ai_security"]

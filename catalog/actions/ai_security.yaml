@@ -1,0 +1,239 @@
+actions:
+
+  - id: disable_ai_endpoint
+    name: Disable AI Model Endpoint
+    domain: ai_security
+    description: >
+      Disable or rate-limit an AI/ML model inference endpoint that is being
+      actively exploited (prompt injection, model extraction, adversarial
+      inputs). Preserves model artifacts and logs for investigation.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: endpoint_id
+        type: string
+        required: true
+        description: Model endpoint identifier (API gateway ID, deployment name, etc.).
+        example: "gpt-production-v2"
+      - name: action_type
+        type: string
+        required: false
+        default: disable
+        enum:
+          - disable
+          - rate_limit
+          - maintenance_mode
+        description: Type of restriction to apply.
+      - name: reason
+        type: string
+        required: false
+        description: Reason for disabling (audit log).
+        default: "Disabled via ThreatFlow due to suspected exploitation"
+    outputs:
+      - name: endpoint_id
+        type: string
+        description: Endpoint that was disabled.
+      - name: previous_state
+        type: string
+        description: State before action was taken.
+      - name: current_state
+        type: string
+        description: State after action (disabled, rate_limited, maintenance).
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-AI
+        technique_name: Application Isolation
+        tactic: Isolate
+    attack_mappings: []
+    atlas_mappings:
+      - technique_id: AML.T0048
+        technique_name: Prompt Injection
+      - technique_id: AML.T0025
+        technique_name: Exfiltration via ML Inference API
+      - technique_id: AML.T0029
+        technique_name: Denial of ML Service
+    tags:
+      - ai-security
+      - llm
+      - containment
+      - model-endpoint
+
+  - id: revoke_ai_api_keys
+    name: Revoke AI Service API Keys
+    domain: ai_security
+    description: >
+      Revoke API keys or tokens used to access AI/ML services. Prevents
+      further unauthorized model queries, training data access, or
+      pipeline manipulation via compromised credentials.
+    risk_level: medium
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: service_id
+        type: string
+        required: true
+        description: AI service or platform identifier.
+        example: "openai-production"
+      - name: key_ids
+        type: list
+        required: false
+        description: Specific API key IDs to revoke. If empty, revokes all active keys.
+      - name: reason
+        type: string
+        required: false
+        default: "Revoked via ThreatFlow"
+    outputs:
+      - name: service_id
+        type: string
+        description: AI service affected.
+      - name: keys_revoked
+        type: integer
+        description: Number of API keys revoked.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-CR
+        technique_name: Credential Reset
+        tactic: Restore
+    attack_mappings: []
+    atlas_mappings:
+      - technique_id: AML.T0000
+        technique_name: ML Model Access
+      - technique_id: AML.T0025
+        technique_name: Exfiltration via ML Inference API
+    tags:
+      - ai-security
+      - credential
+      - containment
+
+  - id: block_prompt_source
+    name: Block Prompt Injection Source
+    domain: ai_security
+    description: >
+      Block a source (IP, user, or application) identified as generating
+      prompt injection attacks against LLM endpoints. Applies WAF rules,
+      API gateway blocks, or application-level deny lists.
+    risk_level: medium
+    approval_mode: none
+    supported_providers:
+      - defender
+    inputs:
+      - name: source_type
+        type: string
+        required: true
+        enum:
+          - ip
+          - user
+          - application
+          - api_key
+        description: Type of source to block.
+      - name: source_id
+        type: string
+        required: true
+        description: Identifier of the source (IP address, user ID, app ID, key ID).
+        example: "198.51.100.42"
+      - name: target_endpoint
+        type: string
+        required: false
+        description: Specific AI endpoint to protect. If empty, blocks across all endpoints.
+      - name: reason
+        type: string
+        required: false
+        default: "Blocked due to prompt injection activity"
+    outputs:
+      - name: source_id
+        type: string
+        description: Source that was blocked.
+      - name: blocked
+        type: boolean
+        description: Whether the block was applied.
+      - name: rule_id
+        type: string
+        description: Provider-specific block rule identifier.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-IB
+        technique_name: IP Blacklisting
+        tactic: Isolate
+      - technique_id: D3-NTF
+        technique_name: Network Traffic Filtering
+        tactic: Harden
+    attack_mappings: []
+    atlas_mappings:
+      - technique_id: AML.T0048
+        technique_name: Prompt Injection
+      - technique_id: AML.T0054
+        technique_name: LLM Jailbreak
+      - technique_id: AML.T0043
+        technique_name: Craft Adversarial Data
+    tags:
+      - ai-security
+      - llm
+      - block
+      - prompt-injection
+
+  - id: quarantine_ml_model
+    name: Quarantine ML Model
+    domain: ai_security
+    description: >
+      Remove a potentially compromised or poisoned ML model from production
+      serving. Rolls back to a known-good version or disables the model
+      endpoint entirely. Preserves the quarantined model for analysis.
+    risk_level: critical
+    approval_mode: hard
+    supported_providers:
+      - defender
+    inputs:
+      - name: model_id
+        type: string
+        required: true
+        description: Model identifier (model name, version, or registry path).
+        example: "fraud-detection-v3.2"
+      - name: model_registry
+        type: string
+        required: false
+        description: Model registry or serving platform identifier.
+      - name: rollback_version
+        type: string
+        required: false
+        description: Known-good model version to roll back to. If empty, endpoint is disabled.
+      - name: reason
+        type: string
+        required: false
+        default: "Quarantined via ThreatFlow"
+    outputs:
+      - name: model_id
+        type: string
+        description: Model that was quarantined.
+      - name: rollback_version
+        type: string
+        description: Version rolled back to (or empty if disabled).
+      - name: quarantined
+        type: boolean
+        description: Whether quarantine was successful.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-AI
+        technique_name: Application Isolation
+        tactic: Isolate
+    attack_mappings: []
+    atlas_mappings:
+      - technique_id: AML.T0040
+        technique_name: ML Supply Chain Compromise
+      - technique_id: AML.T0031
+        technique_name: Erode ML Model Integrity
+    tags:
+      - ai-security
+      - model
+      - containment
+      - supply-chain

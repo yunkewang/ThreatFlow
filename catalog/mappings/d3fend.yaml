@@ -1,7 +1,8 @@
-# MITRE D3FEND technique catalog (subset)
+# MITRE D3FEND technique catalog (curated subset)
 # Source: https://d3fend.mitre.org/
-# Last updated: 2024-01
-# Note: This is a curated subset relevant to common SOC response actions.
+# Last updated: 2025-10
+# Note: Curated subset relevant to common SOC response actions, expanded
+#       to cover cloud, identity, AI/ML, and exposure management techniques.
 # For the complete ontology, see https://d3fend.mitre.org/full-mappings/
 
 techniques:
@@ -20,6 +21,7 @@ techniques:
       - T1090
       - T1486
       - T1210
+      - T1498
     url: https://d3fend.mitre.org/technique/d3f:NetworkIsolation
 
   D3-PT:
@@ -44,8 +46,14 @@ techniques:
       accounts, revoking privileges, and enforcing least-privilege principles.
     counters_attack:
       - T1078
+      - T1078.004
       - T1110
       - T1098
+      - T1098.001
+      - T1136
+      - T1136.003
+      - T1531
+      - T1621
     url: https://d3fend.mitre.org/technique/d3f:UserAccountPermissions
 
   D3-CR:
@@ -59,6 +67,7 @@ techniques:
       - T1110
       - T1556
       - T1078
+      - T1621
     url: https://d3fend.mitre.org/technique/d3f:CredentialReset
 
   D3-MFD:
@@ -88,6 +97,8 @@ techniques:
       - T1041
       - T1048
       - T1219
+      - T1595
+      - T1498
     url: https://d3fend.mitre.org/technique/d3f:IPBlacklisting
 
   D3-NTF:
@@ -103,6 +114,7 @@ techniques:
       - T1041
       - T1048
       - T1095
+      - T1567
     url: https://d3fend.mitre.org/technique/d3f:NetworkTrafficFiltering
 
   D3-EFI:
@@ -144,3 +156,87 @@ techniques:
       - T1583.001
       - T1071.004
     url: https://d3fend.mitre.org/technique/d3f:DNSAllowlisting
+
+  # ── New D3FEND techniques for expanded coverage ─────────────────
+
+  D3-MFA:
+    id: D3-MFA
+    name: Multi-factor Authentication
+    tactic: Harden
+    description: >
+      Require two or more authentication factors for user and service account
+      access. Hardens authentication flows against credential theft, replay,
+      and MFA fatigue attacks.
+    counters_attack:
+      - T1078
+      - T1110
+      - T1621
+      - T1528
+    url: https://d3fend.mitre.org/technique/d3f:Multi-factorAuthentication
+
+  D3-ACL:
+    id: D3-ACL
+    name: Access Control List
+    tactic: Harden
+    description: >
+      Manage access control lists to restrict resource access. Applied to cloud
+      IAM policies, storage buckets, network security groups, and Kubernetes
+      RBAC to enforce least privilege.
+    counters_attack:
+      - T1078.004
+      - T1530
+      - T1098.001
+      - T1136.003
+    url: https://d3fend.mitre.org/technique/d3f:AccessControlList
+
+  D3-BA:
+    id: D3-BA
+    name: Backup
+    tactic: Restore
+    description: >
+      Create and maintain backups of critical data and system configurations.
+      Essential countermeasure for ransomware and destructive attacks.
+    counters_attack:
+      - T1486
+      - T1490
+    url: https://d3fend.mitre.org/technique/d3f:Backup
+
+  D3-SDA:
+    id: D3-SDA
+    name: Security Software Discovery Analysis
+    tactic: Detect
+    description: >
+      Monitor for attempts to discover or tamper with security software and
+      defensive tools deployed in the environment.
+    counters_attack:
+      - T1562
+      - T1562.001
+      - T1070
+    url: https://d3fend.mitre.org/technique/d3f:SecuritySoftwareDiscoveryAnalysis
+
+  D3-AI:
+    id: D3-AI
+    name: Application Isolation
+    tactic: Isolate
+    description: >
+      Isolate applications, containers, or workloads from each other and
+      the host system to limit blast radius from compromised components.
+    counters_attack:
+      - T1190
+      - T1055
+      - T1548
+    url: https://d3fend.mitre.org/technique/d3f:ApplicationIsolation
+
+  D3-CSPM:
+    id: D3-CSPM
+    name: Cloud Security Posture Management
+    tactic: Detect
+    description: >
+      Continuously assess cloud infrastructure configurations against security
+      policies and compliance frameworks to detect misconfigurations and drift.
+    counters_attack:
+      - T1078.004
+      - T1530
+      - T1526
+      - T1190
+    url: https://d3fend.mitre.org/technique/d3f:CloudSecurityPostureManagement

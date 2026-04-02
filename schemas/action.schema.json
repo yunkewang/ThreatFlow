@@ -20,7 +20,7 @@
     },
     "domain": {
       "type": "string",
-      "enum": ["endpoint", "identity", "email", "network", "case"],
+      "enum": ["endpoint", "identity", "email", "network", "case", "cloud", "ai_security"],
       "description": "Security domain this action belongs to."
     },
     "description": {
@@ -68,6 +68,22 @@
       "type": "array",
       "items": { "$ref": "#/$defs/ATTACKMapping" },
       "default": []
+    },
+    "atlas_mappings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ATLASMapping" },
+      "default": []
+    },
+    "sigma_rule_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Sigma rule IDs from SigmaHQ that trigger this response action."
+    },
+    "ctem_stage": {
+      "type": "string",
+      "enum": ["scoping", "discovery", "prioritization", "validation", "mobilization"],
+      "description": "CTEM lifecycle stage this action supports."
     },
     "tags": {
       "type": "array",
@@ -162,6 +178,24 @@
         "tactic": {
           "type": "string",
           "default": ""
+        },
+        "url": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "ATLASMapping": {
+      "type": "object",
+      "required": ["technique_id", "technique_name"],
+      "additionalProperties": false,
+      "properties": {
+        "technique_id": {
+          "type": "string",
+          "pattern": "^AML\\."
+        },
+        "technique_name": {
+          "type": "string"
         },
         "url": {
           "type": "string",

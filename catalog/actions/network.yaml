@@ -71,6 +71,10 @@ actions:
       - technique_id: T1041
         technique_name: Exfiltration Over C2 Channel
         tactic: Exfiltration
+    sigma_rule_refs:
+      - "net_connection_win_c2_communication"
+      - "proxy_cobalt_strike_beacon"
+    ctem_stage: mobilization
     tags:
       - network
       - block

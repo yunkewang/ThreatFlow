@@ -1,0 +1,235 @@
+actions:
+
+  - id: suspend_cloud_identity
+    name: Suspend Cloud Identity
+    domain: cloud
+    description: >
+      Suspend or disable a cloud IAM principal (AWS IAM user, Azure AD app
+      registration, GCP service account) to prevent further API access.
+      Preserves the identity and its history for forensic analysis.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: principal_id
+        type: string
+        required: true
+        description: Cloud-provider-specific principal identifier (ARN, object ID, or email).
+        example: "arn:aws:iam::123456789012:user/compromised-user"
+      - name: cloud_provider
+        type: string
+        required: true
+        enum:
+          - aws
+          - azure
+          - gcp
+        description: Cloud platform where the identity resides.
+      - name: reason
+        type: string
+        required: false
+        description: Reason for suspension (audit log).
+        default: "Suspended via ThreatFlow"
+    outputs:
+      - name: principal_id
+        type: string
+        description: Principal that was suspended.
+      - name: cloud_provider
+        type: string
+        description: Cloud platform.
+      - name: suspended
+        type: boolean
+        description: Whether suspension was successful.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-UAP
+        technique_name: User Account Permissions
+        tactic: Harden
+      - technique_id: D3-ACL
+        technique_name: Access Control List
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1078.004
+        technique_name: "Valid Accounts: Cloud Accounts"
+        tactic: Initial Access
+      - technique_id: T1098.001
+        technique_name: "Account Manipulation: Additional Cloud Credentials"
+        tactic: Persistence
+    tags:
+      - cloud
+      - identity
+      - containment
+      - iam
+
+  - id: revoke_cloud_credentials
+    name: Revoke Cloud Credentials
+    domain: cloud
+    description: >
+      Revoke or rotate all active access keys, secrets, and tokens for a cloud
+      principal. Forces re-authentication and invalidates any stolen credentials.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: principal_id
+        type: string
+        required: true
+        description: Cloud-provider-specific principal identifier.
+        example: "user@company.onmicrosoft.com"
+      - name: cloud_provider
+        type: string
+        required: true
+        enum:
+          - aws
+          - azure
+          - gcp
+        description: Cloud platform.
+      - name: rotate_keys
+        type: boolean
+        required: false
+        default: true
+        description: Whether to create new keys after revoking old ones.
+    outputs:
+      - name: principal_id
+        type: string
+        description: Principal whose credentials were revoked.
+      - name: keys_revoked
+        type: integer
+        description: Number of access keys/secrets revoked.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-CR
+        technique_name: Credential Reset
+        tactic: Restore
+      - technique_id: D3-ACL
+        technique_name: Access Control List
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1528
+        technique_name: Steal Application Access Token
+        tactic: Credential Access
+      - technique_id: T1078.004
+        technique_name: "Valid Accounts: Cloud Accounts"
+        tactic: Initial Access
+    tags:
+      - cloud
+      - credential
+      - containment
+
+  - id: restrict_storage_access
+    name: Restrict Cloud Storage Access
+    domain: cloud
+    description: >
+      Lock down a cloud storage resource (S3 bucket, Azure Blob container,
+      GCS bucket) by removing public access, restricting IAM policies, or
+      enabling access logging. Used to stop active data exfiltration.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: resource_id
+        type: string
+        required: true
+        description: Storage resource identifier (bucket name, container URL, etc.).
+        example: "s3://sensitive-data-bucket"
+      - name: cloud_provider
+        type: string
+        required: true
+        enum:
+          - aws
+          - azure
+          - gcp
+        description: Cloud platform.
+      - name: block_public_access
+        type: boolean
+        required: false
+        default: true
+        description: Whether to block all public access.
+    outputs:
+      - name: resource_id
+        type: string
+        description: Storage resource that was locked down.
+      - name: public_access_blocked
+        type: boolean
+        description: Whether public access was blocked.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-ACL
+        technique_name: Access Control List
+        tactic: Harden
+    attack_mappings:
+      - technique_id: T1530
+        technique_name: Data from Cloud Storage
+        tactic: Collection
+      - technique_id: T1567
+        technique_name: Exfiltration Over Web Service
+        tactic: Exfiltration
+    tags:
+      - cloud
+      - storage
+      - containment
+      - data-protection
+
+  - id: isolate_container
+    name: Isolate Container or Pod
+    domain: cloud
+    description: >
+      Apply a deny-all network policy to a Kubernetes pod or container,
+      isolating it from the cluster network while preserving logs and
+      state for forensic analysis.
+    risk_level: high
+    approval_mode: soft
+    supported_providers:
+      - defender
+    inputs:
+      - name: workload_id
+        type: string
+        required: true
+        description: Pod name, container ID, or workload selector.
+        example: "namespace/pod-name"
+      - name: cluster
+        type: string
+        required: true
+        description: Kubernetes cluster name or ID.
+      - name: namespace
+        type: string
+        required: false
+        description: Kubernetes namespace.
+        default: "default"
+    outputs:
+      - name: workload_id
+        type: string
+        description: Workload that was isolated.
+      - name: network_policy_applied
+        type: boolean
+        description: Whether the deny-all policy was applied.
+      - name: timestamp
+        type: string
+        description: ISO 8601 timestamp.
+    d3fend_mappings:
+      - technique_id: D3-NI
+        technique_name: Network Isolation
+        tactic: Isolate
+      - technique_id: D3-AI
+        technique_name: Application Isolation
+        tactic: Isolate
+    attack_mappings:
+      - technique_id: T1190
+        technique_name: Exploit Public-Facing Application
+        tactic: Initial Access
+      - technique_id: T1055
+        technique_name: Process Injection
+        tactic: Privilege Escalation
+    tags:
+      - cloud
+      - kubernetes
+      - container
+      - containment

@@ -1,0 +1,70 @@
+# AI/LLM Prompt Injection Response Playbook
+# Triggered when prompt injection attacks are detected against LLM endpoints.
+# ATLAS techniques: AML.T0048 (Prompt Injection), AML.T0054 (LLM Jailbreak)
+
+name: AI Prompt Injection Response
+description: >
+  Respond to detected prompt injection or jailbreak attacks against
+  LLM-powered endpoints. Blocks the attack source, rate-limits the
+  targeted endpoint, and documents the incident.
+version: "1.0.0"
+triggers:
+  - AML.T0048
+  - AML.T0054
+severity: high
+
+inputs:
+  - name: source_ip
+    type: string
+    required: true
+    description: IP address of the attack source.
+  - name: endpoint_id
+    type: string
+    required: true
+    description: AI model endpoint under attack.
+  - name: case_title
+    type: string
+    required: false
+    default: "Prompt Injection Attack Detected"
+
+steps:
+
+  - id: create_case
+    action: create_case
+    provider: defender
+    params:
+      title: "{{ case_title }}"
+      description: "Prompt injection attack from {{ source_ip }} targeting {{ endpoint_id }}"
+      severity: high
+      tags:
+        - ai-security
+        - prompt-injection
+    on_error: stop
+
+  - id: block_source
+    action: block_prompt_source
+    provider: defender
+    params:
+      source_type: ip
+      source_id: "{{ source_ip }}"
+      target_endpoint: "{{ endpoint_id }}"
+      reason: "Prompt injection source — case {{ create_case.case_id }}"
+    on_error: continue
+
+  - id: rate_limit_endpoint
+    action: disable_ai_endpoint
+    provider: defender
+    params:
+      endpoint_id: "{{ endpoint_id }}"
+      action_type: rate_limit
+      reason: "Rate-limited due to active prompt injection — case {{ create_case.case_id }}"
+    on_error: continue
+
+  - id: document_ioc
+    action: add_artifact
+    provider: defender
+    params:
+      case_id: "{{ create_case.case_id }}"
+      artifact_type: ip
+      artifact_value: "{{ source_ip }}"
+      description: "Prompt injection source IP"

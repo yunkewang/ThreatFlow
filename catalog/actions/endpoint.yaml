@@ -49,6 +49,10 @@ actions:
       - technique_id: T1486
         technique_name: Data Encrypted for Impact
         tactic: Impact
+    sigma_rule_refs:
+      - "proc_creation_win_ransomware_behavioral"
+      - "net_connection_win_lateral_movement_rdp"
+    ctem_stage: mobilization
     tags:
       - endpoint
       - containment
@@ -146,6 +150,10 @@ actions:
       - technique_id: T1055
         technique_name: Process Injection
         tactic: Defense Evasion
+    sigma_rule_refs:
+      - "proc_creation_win_malware_generic"
+      - "proc_creation_win_powershell_suspicious"
+    ctem_stage: mobilization
     tags:
       - endpoint
       - execution
